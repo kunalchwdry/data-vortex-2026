@@ -1,0 +1,13 @@
+anomaly,raw_count,resolved_to
+exact duplicate rows (outage replay),360,360 rows dropped
+negative likes (sign flip on export),525,509 magnitudes restored in analysis table
+likes serialised as float strings ('-1205.0'),525,cast to nullable Int64
+blank / 'NULL' likes,1858,left NULL (no imputation)
+blank / 'NULL' platform,1846,bucketed 'Unspecified' (15.08% of posts)
+blank or 'NULL' text body,1770,1779 held out to separate CSV
+trailing '<br>' / '<div>' markup,663,"markup stripped, text kept"
+trailing '&amp;' entity,341,entity unescaped + tail trimmed
+double-encoded UTF-8 tail (C3 A9),316,round-trip repaired + artefact trimmed
+triple-format timestamps,3622,"parsed by format, ambiguity flagged"
+users posting before account creation,0,n/a -- none present
+posts referencing an unknown user_id,0,n/a -- none present

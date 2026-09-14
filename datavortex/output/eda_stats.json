@@ -1,0 +1,347 @@
+{
+  "trend": {
+    "months_covered": 12,
+    "window": [
+      "2024-05-01",
+      "2025-04-30"
+    ],
+    "peak_month": "2024-05",
+    "peak_posts": 878,
+    "trough_month": "2025-02",
+    "trough_posts": 794,
+    "swing_pct": 10.6,
+    "corr_volume_engagement": 0.242,
+    "biggest_jump": {
+      "month": "2025-03",
+      "pct": 9.4
+    },
+    "biggest_drop": {
+      "month": "2025-02",
+      "pct": -6.1
+    }
+  },
+  "platform": {
+    "table": {
+      "YouTube": {
+        "posts": 1770.0,
+        "mean_likes": 2494.91,
+        "mean_shares": 1008.96,
+        "mean_comments": 505.26,
+        "missing_likes": 275.0
+      },
+      "Facebook": {
+        "posts": 1763.0,
+        "mean_likes": 2527.32,
+        "mean_shares": 986.81,
+        "mean_comments": 507.63,
+        "missing_likes": 269.0
+      },
+      "Twitter": {
+        "posts": 1742.0,
+        "mean_likes": 2432.37,
+        "mean_shares": 1006.82,
+        "mean_comments": 503.52,
+        "missing_likes": 273.0
+      },
+      "Reddit": {
+        "posts": 1716.0,
+        "mean_likes": 2463.8,
+        "mean_shares": 985.06,
+        "mean_comments": 506.92,
+        "missing_likes": 243.0
+      },
+      "Instagram": {
+        "posts": 1689.0,
+        "mean_likes": 2504.75,
+        "mean_shares": 1043.33,
+        "mean_comments": 501.76,
+        "missing_likes": 254.0
+      },
+      "Unspecified": {
+        "posts": 1541.0,
+        "mean_likes": 2501.19,
+        "mean_shares": 999.18,
+        "mean_comments": 500.38,
+        "missing_likes": 218.0
+      }
+    },
+    "unspecified_share_pct": 15.08,
+    "spread_mean_likes_pct": 3.8,
+    "missing_like_rate_by_platform": {
+      "Facebook": 15.26,
+      "Instagram": 15.04,
+      "Reddit": 14.16,
+      "Twitter": 15.67,
+      "Unspecified": 14.15,
+      "YouTube": 15.54
+    }
+  },
+  "time": {
+    "peak_hour": 23,
+    "trough_hour": 14,
+    "peak_hour_pct": 4.63,
+    "trough_hour_pct": 3.8,
+    "hour_spread_ratio": 1.219,
+    "timebearing_n": 7219,
+    "artefact_midnight_naive_rows": 3325,
+    "artefact_midnight_naive_pct": 32.53,
+    "artefact_midnight_valid_pct": 4.47,
+    "artefact_midnight_from_dateonly_format": 3002,
+    "artefact_note": "3002 of 3325 midnight rows come from the date-only dd-mm-yyyy format; naive peak hour = 0 with 32.5% vs 4.6% on valid rows",
+    "weekend_mean_engagement": 3641.5,
+    "weekday_mean_engagement": 3616.8,
+    "weekend_lift_pct": 0.68
+  },
+  "hashtags": {
+    "distinct": 29,
+    "total_mentions": 20531,
+    "top": [
+      {
+        "tag": "Fitness",
+        "pct_posts": 7.37
+      },
+      {
+        "tag": "Reviews",
+        "pct_posts": 7.36
+      },
+      {
+        "tag": "BestValue",
+        "pct_posts": 7.19
+      },
+      {
+        "tag": "SpecialOffer",
+        "pct_posts": 7.12
+      },
+      {
+        "tag": "Eco",
+        "pct_posts": 7.11
+      },
+      {
+        "tag": "Trending",
+        "pct_posts": 7.08
+      },
+      {
+        "tag": "Sustainable",
+        "pct_posts": 7.05
+      },
+      {
+        "tag": "Affordable",
+        "pct_posts": 7.01
+      },
+      {
+        "tag": "Beauty",
+        "pct_posts": 7.01
+      },
+      {
+        "tag": "Lifestyle",
+        "pct_posts": 7.01
+      }
+    ],
+    "top_pairs": [
+      {
+        "pair": "Eco + Promo",
+        "n": 51
+      },
+      {
+        "pair": "Affordable + Premium",
+        "n": 50
+      },
+      {
+        "pair": "Beauty + Reviews",
+        "n": 49
+      },
+      {
+        "pair": "BestValue + Premium",
+        "n": 49
+      },
+      {
+        "pair": "Lifestyle + Premium",
+        "n": 49
+      },
+      {
+        "pair": "Reviews + Sale",
+        "n": 49
+      }
+    ],
+    "avg_tags_per_post": 2.009,
+    "posts_with_no_tag": 0
+  },
+  "sentiment": {
+    "counts": {
+      "positive": 4185,
+      "neutral": 3262,
+      "negative": 2774
+    },
+    "pct": {
+      "positive": 40.95,
+      "neutral": 31.91,
+      "negative": 27.14
+    },
+    "corr_sentiment_likes": -0.0142,
+    "corr_sentiment_engagement": -0.011,
+    "mean_likes_by_sentiment": {
+      "negative": 2509.8,
+      "neutral": 2509.5,
+      "positive": 2454.8
+    },
+    "mean_engagement_by_sentiment": {
+      "negative": 3651.3,
+      "neutral": 3646.2,
+      "positive": 3587.9
+    }
+  },
+  "geo": {
+    "countries": 18,
+    "top_volume": {
+      "United States": 1430,
+      "China": 687,
+      "Germany": 677,
+      "Brazil": 660,
+      "Japan": 650
+    },
+    "top_engagement": {
+      "United States": 3682.6,
+      "China": 3525.3,
+      "Germany": 3655.2,
+      "Brazil": 3595.9,
+      "Japan": 3647.5
+    },
+    "best_country": "South Korea",
+    "best_country_engagement": 3713.4,
+    "spread_ratio": 1.053
+  },
+  "users": {
+    "n_users_posting": 1500,
+    "posts_per_user": {
+      "count": 1500.0,
+      "mean": 6.81,
+      "std": 2.65,
+      "min": 1.0,
+      "25%": 5.0,
+      "50%": 7.0,
+      "75%": 9.0,
+      "max": 17.0
+    },
+    "gini_like_check_top10_share_pct": 18.4,
+    "corr_followers_engagement": -0.0433,
+    "corr_activity_engagement": 0.0238,
+    "segments": {
+      "power_creator": {
+        "users": 46,
+        "share_pct": 3.1,
+        "mean_posts": 11.0,
+        "mean_engagement": 4419.8
+      },
+      "high_volume_low_yield": {
+        "users": 126,
+        "share_pct": 8.4,
+        "mean_posts": 10.94,
+        "mean_engagement": 3176.5
+      },
+      "quiet_performer": {
+        "users": 141,
+        "share_pct": 9.4,
+        "mean_posts": 3.85,
+        "mean_engagement": 4643.3
+      },
+      "casual": {
+        "users": 469,
+        "share_pct": 31.3,
+        "mean_posts": 5.12,
+        "mean_engagement": 2971.6
+      }
+    }
+  },
+  "anomalies": [
+    {
+      "anomaly": "exact duplicate rows (outage replay)",
+      "raw_count": 360,
+      "resolved_to": "360 rows dropped"
+    },
+    {
+      "anomaly": "negative likes (sign flip on export)",
+      "raw_count": 525,
+      "resolved_to": "509 magnitudes restored in analysis table"
+    },
+    {
+      "anomaly": "likes serialised as float strings ('-1205.0')",
+      "raw_count": 525,
+      "resolved_to": "cast to nullable Int64"
+    },
+    {
+      "anomaly": "blank / 'NULL' likes",
+      "raw_count": 1858,
+      "resolved_to": "left NULL (no imputation)"
+    },
+    {
+      "anomaly": "blank / 'NULL' platform",
+      "raw_count": 1846,
+      "resolved_to": "bucketed 'Unspecified' (15.08% of posts)"
+    },
+    {
+      "anomaly": "blank or 'NULL' text body",
+      "raw_count": 1770,
+      "resolved_to": "1779 held out to separate CSV"
+    },
+    {
+      "anomaly": "trailing '<br>' / '<div>' markup",
+      "raw_count": 663,
+      "resolved_to": "markup stripped, text kept"
+    },
+    {
+      "anomaly": "trailing '&amp;' entity",
+      "raw_count": 341,
+      "resolved_to": "entity unescaped + tail trimmed"
+    },
+    {
+      "anomaly": "double-encoded UTF-8 tail (C3 A9)",
+      "raw_count": 316,
+      "resolved_to": "round-trip repaired + artefact trimmed"
+    },
+    {
+      "anomaly": "triple-format timestamps",
+      "raw_count": 3622,
+      "resolved_to": "parsed by format, ambiguity flagged"
+    },
+    {
+      "anomaly": "users posting before account creation",
+      "raw_count": 0,
+      "resolved_to": "n/a -- none present"
+    },
+    {
+      "anomaly": "posts referencing an unknown user_id",
+      "raw_count": 0,
+      "resolved_to": "n/a -- none present"
+    }
+  ],
+  "anomaly_signals": {
+    "posts_with_zero_or_missing_likes": 1533,
+    "their_mean_shares": 1001.0,
+    "high_share_low_like_posts": 846,
+    "high_share_low_like_pct": 8.28,
+    "repeat_content_users": 0
+  },
+  "format_bias": {
+    "table": {
+      "dayfirst_dmy": {
+        "n": 3002,
+        "mean_likes": 2481.3,
+        "mean_shares": 999.3,
+        "mean_engagement": 3586.1
+      },
+      "epoch_seconds": {
+        "n": 3116,
+        "mean_likes": 2503.8,
+        "mean_shares": 1009.4,
+        "mean_engagement": 3636.8
+      },
+      "iso8601": {
+        "n": 4103,
+        "mean_likes": 2479.0,
+        "mean_shares": 1005.7,
+        "mean_engagement": 3641.3
+      }
+    },
+    "verdict": "engagement means agree across all three intake formats, so the format split is a transport artefact of the outage, not a sampling artefact -- normalising it does not change any conclusion"
+  }
+}

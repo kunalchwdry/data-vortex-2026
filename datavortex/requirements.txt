@@ -1,0 +1,16 @@
+# Phase 1 + 2 pipeline. Pinned to what this run was verified against.
+pandas==2.2.3
+numpy>=1.26
+matplotlib>=3.8
+
+# notebook build/execution (only needed to regenerate notebooks/*.ipynb)
+nbformat>=5.9
+nbclient>=0.10
+jupyter>=1.0
+
+# PDF generation (only needed to regenerate output/*.pdf)
+reportlab>=4.0
+Pillow>=10.0
+
+# tests
+pytest>=8.0

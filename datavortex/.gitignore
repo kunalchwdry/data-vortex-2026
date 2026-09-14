@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
+
+# regenerable, but keep the artefacts that ARE the submission
+!output/*.pdf
+!output/screenshots/
+!output/figures/
+!data/clean/*.csv
+!data/clean/*.json
+!data/clean/*.md
+
+# scratch renderings from PDF verification
+output/_*.png
+output/social_engine.db
