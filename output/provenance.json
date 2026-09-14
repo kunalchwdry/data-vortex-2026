@@ -1,0 +1,14 @@
+{
+  "source_base": "https://datavortex-social-engine.vercel.app",
+  "paths": [
+    "/dataset/Social_Engine_Users.csv",
+    "/dataset/Social_Engine_Posts_Corrupted.csv"
+  ],
+  "local_sha256": {
+    "Social_Engine_Posts_Corrupted.csv": "7f559998d6cd3a6dd6eacc3cbc43afd915586132973c717dda2d2dddd90467e2",
+    "Social_Engine_Users.csv": "d12b95bf1c1fdf33bdc395265dde91c9568a9e67669671abbeebe0a959b71d2c"
+  },
+  "matched_remote": 2,
+  "mismatched": 0,
+  "site_unreachable": 0
+}
