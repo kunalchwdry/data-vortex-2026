@@ -14,7 +14,7 @@
       "z_volume",
       "volume_rank"
     ],
-    "elapsed_ms": 11.423,
+    "elapsed_ms": 13.907,
     "rows": [
       [
         "2024-05",
@@ -139,7 +139,7 @@
       "ma3",
       "inflection"
     ],
-    "elapsed_ms": 5.327,
+    "elapsed_ms": 6.317,
     "rows": [
       [
         "2024-05",
@@ -233,7 +233,7 @@
       "mean_comments",
       "in_rate_comparison"
     ],
-    "elapsed_ms": 5.399,
+    "elapsed_ms": 6.679,
     "rows": [
       [
         "YouTube",
@@ -317,7 +317,7 @@
       "mean_ratio",
       "worst_ratio"
     ],
-    "elapsed_ms": 3.431,
+    "elapsed_ms": 4.479,
     "rows": [
       [
         846,
@@ -347,7 +347,7 @@
       "observed_over_expected",
       "verdict"
     ],
-    "elapsed_ms": 12.049,
+    "elapsed_ms": 15.623,
     "rows": [
       [
         1500,
@@ -378,7 +378,7 @@
       "pct_valid",
       "artefact_rows"
     ],
-    "elapsed_ms": 2.523,
+    "elapsed_ms": 3.157,
     "rows": [
       [
         0,
@@ -589,7 +589,7 @@
       "avg_total_engagement",
       "avg_days_since_last_post"
     ],
-    "elapsed_ms": 11.559,
+    "elapsed_ms": 15.206,
     "rows": [
       [
         "mid_value",
@@ -646,7 +646,7 @@
       "r_squared_pct",
       "verdict"
     ],
-    "elapsed_ms": 9.744,
+    "elapsed_ms": 12.142,
     "rows": [
       [
         1500,
@@ -671,7 +671,7 @@
       "posts",
       "mean_engagement"
     ],
-    "elapsed_ms": 14.782,
+    "elapsed_ms": 18.61,
     "rows": [
       [
         1,
@@ -729,7 +729,7 @@
       "pp_change",
       "best_single_month_gain_pp"
     ],
-    "elapsed_ms": 34.588,
+    "elapsed_ms": 42.497,
     "rows": [
       [
         "Tech",
@@ -802,7 +802,7 @@
       "avg_posts_per_day",
       "max_posts_in_one_day"
     ],
-    "elapsed_ms": 21.54,
+    "elapsed_ms": 27.174,
     "rows": [
       [
         1,
@@ -835,7 +835,7 @@
       "check_name",
       "violations"
     ],
-    "elapsed_ms": 11.565,
+    "elapsed_ms": 13.441,
     "rows": [
       [
         "duplicate post_id",
