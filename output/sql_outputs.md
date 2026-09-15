@@ -33,7 +33,7 @@ FROM monthly m CROSS JOIN stats s
 ORDER BY m.post_month
 ```
 
-**Output** (12 rows, executed in 13.91 ms):
+**Output** (12 rows, executed in 8.70 ms):
 
 | `post_month` | `posts` | `prev_month` | `mom_pct` | `mean_engagement` | `z_volume` | `volume_rank` |
 |---|---|---|---|---|---|---|
@@ -80,7 +80,7 @@ FROM turned
 ORDER BY post_month
 ```
 
-**Output** (12 rows, executed in 6.32 ms):
+**Output** (12 rows, executed in 6.68 ms):
 
 | `post_month` | `posts` | `ma3` | `inflection` |
 |---|---|---|---|
@@ -120,7 +120,7 @@ GROUP BY platform
 ORDER BY posts DESC
 ```
 
-**Output** (6 rows, executed in 6.68 ms):
+**Output** (6 rows, executed in 6.88 ms):
 
 | `platform` | `posts` | `share_pct` | `likes_missing` | `likes_missing_pct` | `mean_engagement` | `mean_shares` | `mean_comments` | `in_rate_comparison` |
 |---|---|---|---|---|---|---|---|---|
@@ -155,7 +155,7 @@ SELECT COUNT(*)                                   AS anomalous_posts,
 FROM flagged
 ```
 
-**Output** (1 row, executed in 4.48 ms):
+**Output** (1 row, executed in 4.14 ms):
 
 | `anomalous_posts` | `comparable_posts` | `pct_of_comparable` | `mean_ratio` | `worst_ratio` |
 |---|---|---|---|---|
@@ -214,7 +214,7 @@ SELECT p.n_users,
 FROM params p CROSS JOIN observed o CROSS JOIN expected e
 ```
 
-**Output** (1 row, executed in 15.62 ms):
+**Output** (1 row, executed in 7.99 ms):
 
 | `n_users` | `n_anom` | `poisson_lambda` | `obs_ge3` | `expected_ge3_by_chance` | `obs_ge4` | `expected_ge4_by_chance` | `busiest_author` | `observed_over_expected` | `verdict` |
 |---|---|---|---|---|---|---|---|---|---|
@@ -239,7 +239,7 @@ GROUP BY h.post_hour
 ORDER BY artefact_rows DESC, h.post_hour
 ```
 
-**Output** (24 rows, executed in 3.16 ms):
+**Output** (24 rows, executed in 3.18 ms):
 
 | `post_hour` | `rows_naive` | `pct_naive` | `rows_with_real_time` | `pct_valid` | `artefact_rows` |
 |---|---|---|---|---|---|
@@ -309,7 +309,7 @@ GROUP BY segment
 ORDER BY users DESC
 ```
 
-**Output** (5 rows, executed in 15.21 ms):
+**Output** (5 rows, executed in 16.23 ms):
 
 | `segment` | `users` | `share_pct` | `avg_posts` | `avg_total_engagement` | `avg_days_since_last_post` |
 |---|---|---|---|---|---|
@@ -357,7 +357,7 @@ SELECT n                                   AS users,
 FROM agg
 ```
 
-**Output** (1 row, executed in 12.14 ms):
+**Output** (1 row, executed in 12.77 ms):
 
 | `users` | `pearson_r` | `r_squared_pct` | `verdict` |
 |---|---|---|---|
@@ -389,7 +389,7 @@ GROUP BY quintile
 ORDER BY quintile
 ```
 
-**Output** (5 rows, executed in 18.61 ms):
+**Output** (5 rows, executed in 19.61 ms):
 
 | `quintile` | `follower_band` | `min_followers` | `max_followers` | `posts` | `mean_engagement` |
 |---|---|---|---|---|---|
@@ -439,7 +439,7 @@ ORDER BY pp_change DESC
 LIMIT 8
 ```
 
-**Output** (8 rows, executed in 42.50 ms):
+**Output** (8 rows, executed in 43.84 ms):
 
 | `tag` | `pct_final_month` | `pct_first_month` | `pp_change` | `best_single_month_gain_pp` |
 |---|---|---|---|---|
@@ -485,7 +485,7 @@ GROUP BY streak_len
 ORDER BY streak_len
 ```
 
-**Output** (3 rows, executed in 27.17 ms):
+**Output** (3 rows, executed in 32.35 ms):
 
 | `streak_len` | `streaks` | `avg_posts_per_day` | `max_posts_in_one_day` |
 |---|---|---|---|
@@ -522,7 +522,7 @@ SELECT 'timestamps outside window',
          WHERE posted_at < '2024-05-01' OR posted_at >= '2025-05-01')
 ```
 
-**Output** (5 rows, executed in 13.44 ms):
+**Output** (5 rows, executed in 14.06 ms):
 
 | `check_name` | `violations` |
 |---|---|

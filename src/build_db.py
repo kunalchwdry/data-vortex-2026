@@ -58,7 +58,13 @@ CREATE TABLE IF NOT EXISTS users (
     country         TEXT,
     language        TEXT    NOT NULL,
     account_created TEXT    NOT NULL,
-    follower_count  INTEGER NOT NULL CHECK (follower_count >= 0)
+    follower_count  INTEGER NOT NULL CHECK (follower_count >= 0),
+    -- The source's own `location` string, kept VERBATIM alongside the split.
+    -- It is not redundant: the source says 'Los Angeles, USA' while the split
+    -- normalises country to 'United States', so grouping on the split would
+    -- relabel 289 users (USA/UK) and break every location answer's traceability
+    -- back to the intake file. Location questions therefore group on this.
+    location        TEXT    NOT NULL
 );
 
 -- Long-form tags: turns the '#' soup into a joinable dimension so hashtag
@@ -67,6 +73,38 @@ CREATE TABLE IF NOT EXISTS post_tags (
     post_id TEXT NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE,
     tag     TEXT NOT NULL,
     PRIMARY KEY (post_id, tag)
+);
+
+-- ---- corruption forensics -------------------------------------------------
+-- `raw_posts` is the intake file loaded WITHOUT any repair: every value stays a
+-- string exactly as it arrived. The anomaly questions ("is this post
+-- corrupted?") cannot be asked of the cleaned table, because the cleaning step
+-- is precisely what removed the evidence -- a query over `posts` would always
+-- answer "no anomalies" and prove nothing. Also note the grain: all 12,360
+-- intake rows are staged, including the 360 exact replays, so the raw counts
+-- here reconcile with data/clean/repair_log.csv and output/anomaly_table.csv.
+CREATE TABLE IF NOT EXISTS raw_posts (
+    row_no       INTEGER PRIMARY KEY,   -- 1-based line in the intake file
+    post_id      TEXT,
+    user_id      TEXT,
+    platform     TEXT,
+    text_content TEXT,
+    timestamp    TEXT,
+    likes        TEXT,
+    shares       TEXT,
+    comments     TEXT
+);
+
+-- Long-form anomaly relation: one row per (post, defect). A post with both a
+-- negative like count and a missing platform appears twice, so no condition is
+-- silently masked by another. `evidence` carries the offending raw value.
+CREATE TABLE IF NOT EXISTS raw_post_anomalies (
+    post_id      TEXT NOT NULL,
+    anomaly_type TEXT NOT NULL CHECK (anomaly_type IN
+                    ('NEGATIVE_LIKES','MISSING_PLATFORM','MISSING_TEXT',
+                     'HTML_ENTITY_OR_TAG')),
+    evidence     TEXT,
+    PRIMARY KEY (post_id, anomaly_type)
 );
 
 CREATE INDEX IF NOT EXISTS ix_posts_month   ON posts(post_month);
@@ -99,6 +137,104 @@ SELECT post_month,
        SUM(likes_restored)                   AS repaired_like_rows
 FROM v_posts_enriched
 GROUP BY post_month;
+
+-- ---- per-actor grains, defined once so every downstream query aggregates the
+--      same way (a user-level average recomputed inside five queries is five
+--      chances to disagree with itself).
+CREATE VIEW IF NOT EXISTS v_user_totals AS
+SELECT u.user_id,
+       u.location,
+       u.language,
+       u.follower_count,
+       COUNT(*)               AS n_posts,
+       SUM(p.engagement)      AS total_engagement,
+       AVG(p.engagement)      AS avg_engagement,
+       SUM(p.engagement) * 1.0 / COUNT(*) AS eng_per_post
+FROM v_posts_enriched p
+JOIN users u ON u.user_id = p.user_id
+GROUP BY u.user_id;
+
+CREATE VIEW IF NOT EXISTS v_location_totals AS
+SELECT u.location,
+       COUNT(DISTINCT u.user_id) AS n_users,
+       COUNT(*)                  AS n_posts,
+       SUM(p.engagement)         AS total_engagement,
+       AVG(p.engagement)         AS avg_engagement_per_post
+FROM v_posts_enriched p
+JOIN users u ON u.user_id = p.user_id
+GROUP BY u.location;
+
+-- Platform-level rates. 'Unspecified' is a data gap, not a platform: it stays in
+-- the volume counts (a missing label does not make the post disappear) but is
+-- excluded here so no per-platform RATE is ever computed from unknown labels.
+CREATE VIEW IF NOT EXISTS v_platform_totals AS
+SELECT platform,
+       COUNT(*)          AS n_posts,
+       AVG(engagement)   AS avg_engagement,
+       SUM(engagement)   AS total_engagement,
+       AVG(COALESCE(likes,0))    AS avg_likes,
+       AVG(COALESCE(shares,0))   AS avg_shares,
+       AVG(COALESCE(comments,0)) AS avg_comments,
+       COUNT(likes)      AS rows_with_likes
+FROM v_posts_enriched
+GROUP BY platform;
+
+-- The four corruption signatures, expressed ONCE in SQL (not in Python), so the
+-- definition of "corrupted" is auditable and the query that reports anomalies
+-- reads the same predicate that populated the table.
+--
+-- The nested REPLACEs are not decoration: SQLite's TRIM() strips spaces only,
+-- and 24 intake rows carry the token 'NULL' followed by two newlines. A view
+-- that used TRIM alone would classify those as having text and undercount the
+-- blank-text family by exactly 24 rows (1,746 instead of the true 1,770 in
+-- output/anomaly_table.csv). Normalising the ASCII whitespace first makes the
+-- SQL predicate agree with the cleaning pipeline's .strip().
+CREATE VIEW IF NOT EXISTS v_raw_anomaly_scan AS
+SELECT row_no, post_id,
+       CASE WHEN CAST(TRIM(likes) AS REAL) < 0 THEN 1 ELSE 0 END AS is_negative_likes,
+       CASE WHEN UPPER(TRIM(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+                     COALESCE(platform,''),
+                     CHAR(9),' '), CHAR(10),' '), CHAR(11),' '),
+                     CHAR(12),' '), CHAR(13),' ')))
+                 IN ('','NULL','NONE','NAN','N/A','NA') THEN 1 ELSE 0 END AS is_missing_platform,
+       CASE WHEN UPPER(TRIM(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+                     COALESCE(text_content,''),
+                     CHAR(9),' '), CHAR(10),' '), CHAR(11),' '),
+                     CHAR(12),' '), CHAR(13),' ')))
+                 IN ('','NULL','NONE','NAN','N/A','NA') THEN 1 ELSE 0 END AS is_missing_text,
+       CASE WHEN text_content LIKE '%&amp;%' OR text_content LIKE '%&lt;%'
+              OR text_content LIKE '%&gt;%' OR text_content LIKE '%<div%'
+              OR text_content LIKE '%<br%'              THEN 1 ELSE 0 END AS is_html_markup,
+       TRIM(likes)       AS raw_likes,
+       TRIM(platform)    AS raw_platform,
+       text_content      AS raw_text
+FROM raw_posts;
+"""
+
+# Populated only AFTER raw_posts is staged -- the scan needs the rows to exist.
+ANOMALY_SQL = """
+INSERT INTO raw_post_anomalies (post_id, anomaly_type, evidence)
+SELECT DISTINCT post_id, 'NEGATIVE_LIKES', 'raw likes = ' || raw_likes
+FROM v_raw_anomaly_scan WHERE is_negative_likes = 1;
+
+INSERT INTO raw_post_anomalies (post_id, anomaly_type, evidence)
+SELECT DISTINCT post_id, 'MISSING_PLATFORM',
+       CASE WHEN raw_platform = '' THEN 'platform is blank'
+            ELSE 'platform = ' || raw_platform END
+FROM v_raw_anomaly_scan WHERE is_missing_platform = 1;
+
+INSERT INTO raw_post_anomalies (post_id, anomaly_type, evidence)
+SELECT DISTINCT post_id, 'MISSING_TEXT', 'text_content is blank or the NULL token'
+FROM v_raw_anomaly_scan WHERE is_missing_text = 1;
+
+INSERT INTO raw_post_anomalies (post_id, anomaly_type, evidence)
+SELECT DISTINCT post_id, 'HTML_ENTITY_OR_TAG',
+       CASE WHEN raw_text LIKE '%&amp;%' THEN 'contains &amp;'
+            WHEN raw_text LIKE '%&lt;%'  THEN 'contains &lt;'
+            WHEN raw_text LIKE '%&gt;%'  THEN 'contains &gt;'
+            WHEN raw_text LIKE '%<div%'  THEN 'contains <div>'
+            ELSE 'contains <br>' END
+FROM v_raw_anomaly_scan WHERE is_html_markup = 1;
 """
 
 # CSV column -> table column, with renames so the SQL schema is self-documenting
@@ -113,7 +249,10 @@ POST_COLS = {
     "timestamp_format": "timestamp_format",
 }
 USER_COLS = ["user_id", "city", "country", "language", "account_created",
-             "follower_count"]
+             "follower_count", "location"]
+
+RAW_COLS = ["post_id", "user_id", "platform", "text_content", "timestamp",
+            "likes", "shares", "comments"]
 
 
 def main() -> None:
@@ -152,6 +291,16 @@ def main() -> None:
     users.to_sql("users", con, if_exists="append", index=False)
     posts.to_sql("posts", con, if_exists="append", index=False)
 
+    # ---- raw corruption forensics -----------------------------------------
+    # Read with keep_default_na=False and dtype=str: pandas' own NA handling
+    # would turn the literal 'NULL' into NaN before SQL ever sees it, hiding the
+    # very defect a corruption question asks about.
+    raw = pd.read_csv(ROOT / "data" / "raw" / "Social_Engine_Posts_Corrupted.csv",
+                      dtype=str, keep_default_na=False)[RAW_COLS].copy()
+    raw.insert(0, "row_no", range(1, len(raw) + 1))
+    raw.to_sql("raw_posts", con, if_exists="append", index=False)
+    con.executescript(ANOMALY_SQL)
+
     # explode hashtag soup into the relation
     import re
     HT = re.compile(r"#([A-Za-z][A-Za-z0-9_]*)")
@@ -165,9 +314,15 @@ def main() -> None:
     n_p = con.execute("SELECT COUNT(*) FROM posts").fetchone()[0]
     n_u = con.execute("SELECT COUNT(*) FROM users").fetchone()[0]
     n_t = con.execute("SELECT COUNT(*) FROM post_tags").fetchone()[0]
+    n_raw = con.execute("SELECT COUNT(*) FROM raw_posts").fetchone()[0]
+    n_anom = con.execute("SELECT COUNT(*) FROM raw_post_anomalies").fetchone()[0]
+    n_anom_posts = con.execute(
+        "SELECT COUNT(DISTINCT post_id) FROM raw_post_anomalies").fetchone()[0]
     fk = con.execute("PRAGMA foreign_key_check").fetchall()
     con.close()
     print(f"[db] {DB.relative_to(ROOT)}  posts={n_p} users={n_u} post_tags={n_t}")
+    print(f"[db] raw_posts={n_raw}  anomaly rows={n_anom} "
+          f"over {n_anom_posts} distinct posts")
     print(f"[db] foreign_key_check violations: {len(fk)}")
 
 
