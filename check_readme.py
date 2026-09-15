@@ -138,6 +138,38 @@ claims = {
     "Q1 z max +1.07":                (round(max(zs), 2), 1.07),
     "Q1 3 of 12 beyond 1 SD":        (sum(1 for z in zs if abs(z) >= 1), 3),
 }
+
+# ------------------------------------------------- 5. Phase 2 challenge claims
+# The challenge-set section makes the same promise as the rest of the README, so
+# it gets the same treatment: every number is recomputed from the artefact.
+p2 = {q["id"]: q for q in json.loads((R / "output/phase2_sql_results.json").read_text())}
+
+
+def pc(qid, column, row=0):
+    q = p2[qid]
+    return q["rows"][row][q["columns"].index(column)]
+
+
+claims.update({
+    "45 SQL queries (12 + 33)":   (len(sql) + len(p2), 45),
+    "E1 YouTube 1,770":           (pc("E1", "n_posts"), 1770),
+    "E1b chi2 2.6094":            (pc("E1b", "chi2_total"), 2.6094),
+    "E4 214 posts":               (len(p2["E4"]["rows"]), 214),
+    "E5 293 users":               (len(p2["E5"]["rows"]), 293),
+    "M1 33 locations":            (len(p2["M1"]["rows"]), 33),
+    "M2b z -1.441":               (pc("M2b", "z_stat"), -1.441),
+    "M5 strict 1,047":            (pc("M5b", "strict_definition"), 1047),
+    "M5b phantom 1,154":          (pc("M5b", "anomalies_created_by_blanks"), 1154),
+    "H1 0 qualifying users":      (pc("H1b", "qualifying_users"), 0),
+    "H1b threshold 7247.43":      (pc("H1b", "threshold_2x"), 7247.43),
+    "H2 99 rows":                 (len(p2["H2"]["rows"]), 99),
+    "H3 56 posts":                (len(p2["H3"]["rows"]), 56),
+    "H4 17 users":                (len(p2["H4"]["rows"]), 17),
+    "H5 4,418 posts":             (len(p2["H5"]["rows"]), 4418),
+    "H6 82 users":                (len(p2["H6"]["rows"]), 82),
+    "33 challenge-set queries":   (len(p2), 33),
+})
+
 print()
 for k, (actual, claimed) in claims.items():
     check(f"{k:32} = {claimed}", actual == claimed, f"actual {actual}")
@@ -147,7 +179,8 @@ print()
 sys.path.insert(0, str(R / "src"))
 from config import TEAM_MEMBERS, TEAM_NAME  # noqa: E402
 for needle in [TEAM_NAME, *TEAM_MEMBERS, "12,360", "10,221", "1,779", "2,172", "4.63%", "32.53%", "-0.0433",
-               "1.05", "24.5", "18.4%", "3.8%", "15.08%"]:
+               "1.05", "24.5", "18.4%", "3.8%", "15.08%",
+               "1,770", "1,047", "1,154", "45 SQL queries", "Phase 2 challenge set"]:
     check(f"README mentions {needle}", needle in S)
 
 print("\n" + ("README VERIFIED - all claims match the artefacts"

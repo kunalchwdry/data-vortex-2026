@@ -32,10 +32,10 @@ $PY src/eda.py
 say "3 · SQL schema, load, constraints"
 $PY src/build_db.py
 
-say "4 · run the 12 analytical queries"
+say "4 · run the analytical queries (Q1-Q12 and the E/M/H challenge set)"
 $PY src/run_sql.py
 
-say "5 · render output screenshots"
+say "5 · render output screenshots (both result sets)"
 $PY src/make_screenshots.py
 
 say "6 · tests / invariants"
@@ -47,6 +47,7 @@ $PY check_readme.py | tail -3
 say "7 · build submission PDFs"
 if [ "${pdf_ok:-1}" = 1 ]; then
   $PY src/build_report.py
+  $PY src/build_phase2_report.py
 else
   echo "SKIP - reportlab is not installed (pip install reportlab). Everything else ran."
 fi
@@ -54,8 +55,9 @@ fi
 say "8 · build + execute the notebook"
 $PY src/make_notebook.py
 
-say "9 · assemble the form upload set"
+say "9 · assemble the form upload sets"
 $PY src/make_submission.py
+$PY src/make_submission_phase2.py
 
 printf '\n\033[1;32mdone\033[0m\n'
 echo "  Phase 1 -> submission/  (upload set for the form)"
@@ -63,3 +65,9 @@ echo "            data/clean/Social_Engine_Posts_Clean.csv"
 echo "            output/Phase1_EDA_Report.pdf"
 echo "  Phase 2 -> output/Phase2_Insight_Report.pdf"
 echo "            output/sql_outputs.md"
+echo "  Phase 2 challenge set (E/M/H) ->"
+echo "            output/Phase2_ChallengeSet_Report.pdf"
+echo "            output/phase2_sql_outputs.md"
+echo "            output/screenshots/E1.png ... H6b.png"
+echo "  Phase 2 form upload set ->"
+echo "            submission/phase2/  (4 slots, 8 files, see MANIFEST.md)"

@@ -8,7 +8,7 @@
 
 *Aaruush'26* · 13–16 September 2026 · Round 1 · Phase 1 + Phase 2
 
-`12,360 raw rows → 10,221 analysis rows` · `27 justified repairs` · `12 SQL queries` · `21 tests passing`
+`12,360 raw rows → 10,221 analysis rows` · `27 justified repairs` · `45 SQL queries` · `42 tests passing`
 
 </div>
 
@@ -20,6 +20,8 @@
 | **Member** | Kunal Choudhary |
 | **Phase 1** | cleaned dataset + EDA report + this repo |
 | **Phase 2** | `queries/challenges.sql` + `output/Phase2_Insight_Report.pdf` |
+| **Phase 2 challenge set** | `queries/phase2_challenges.sql` + `output/Phase2_ChallengeSet_Report.pdf` |
+| **Phase 2 form upload set** | [`submission/phase2/`](submission/phase2/MANIFEST.md) — 4 slots, 8 files, labelled E1–H6 |
 
 > **Every number in this README is generated.** The tables and figures below are
 > produced by `./run_all.sh` from the two recovered CSVs — nothing is typed by
@@ -37,10 +39,11 @@
 5. [The two decisions that needed proof](#the-two-decisions-that-needed-proof)
 6. [Exploratory analysis](#exploratory-analysis)
 7. [The SQL analytical core](#the-sql-analytical-core)
-8. [What we tested and rejected](#what-we-tested-and-rejected)
-9. [Repo structure](#repo-structure)
-10. [Assumptions and limitations](#assumptions-and-limitations)
-11. [Rulebook compliance](#rulebook-compliance)
+8. [The Phase 2 challenge set](#the-phase-2-challenge-set)
+9. [What we tested and rejected](#what-we-tested-and-rejected)
+10. [Repo structure](#repo-structure)
+11. [Assumptions and limitations](#assumptions-and-limitations)
+12. [Rulebook compliance](#rulebook-compliance)
 
 ---
 
@@ -277,6 +280,97 @@ defined once.
 
 ---
 
+## The Phase 2 challenge set
+
+21 challenges — `E1`–`E5`, `M1`–`M5`, `H1`–`H6` — answered in
+[`queries/phase2_challenges.sql`](queries/phase2_challenges.sql) against the same
+database, plus **17 companion queries** that attack each headline answer before it
+is published. Nothing here is a separate analysis: it reads the same
+`v_posts_enriched` view and the same users table as the twelve queries above.
+
+Live capture: [`output/phase2_sql_outputs.md`](output/phase2_sql_outputs.md) ·
+screenshots: `output/screenshots/E1.png` … `H6b.png` ·
+report: [`output/Phase2_ChallengeSet_Report.pdf`](output/Phase2_ChallengeSet_Report.pdf)
+
+| # | Challenge | Answer |
+|---|---|---|
+| **E1** | Highest-volume platform (missing labels ignored) | **YouTube** — 1,770 posts |
+| **E1b** | …and the field is flat | χ² 2.6094 vs 9.488 critical, df 4 — no platform preference |
+| **E2** | Top 10 posts by likes + shares + comments | 7,893 at #1 (`ycjj5zzt7mvx`); 1,532 posts with no like count excluded |
+| **E2b** | …how tight the cut is | 1st is only 4.09% above 10th; 14 posts within 1% of the cut |
+| **E3** | Average likes / shares / comments per platform, highest average total | **Instagram** — 3,673.2 per post |
+| **E3b** | …and the win is inside the noise | gap 1.02%, z = 0.635 — not significant |
+| **E4** | Shared > 1,500 but liked < 500 | **214 posts**, both bounds strict |
+| **E4b** | …is it one platform's quirk? | no — it appears on all six at 2.61% (densest) down to 1.34% |
+| **E5** | Users with more than 40,000 followers | **293 users**, top follower count 49,944 |
+| **M1** | Total engagement by location (needs both datasets) | **Los Angeles, USA** — 1,468,866 across 391 posts, 33 locations ranked |
+| **M1b** | …but that ranking is volume, not quality | Shanghai is 6 by total and 33 by engagement per post — a 27-place shift |
+| **M2** | High (≥ 25k) vs low (< 25k) follower cohorts | 3,598.8 vs 3,648.0 — the low cohort is ahead |
+| **M2b** | …and not significantly so | z = -1.441 — follower count does not predict engagement |
+| **M3** | Most active users | top 10 accounts; the leader wrote 17 posts |
+| **M3b** | …but the 10th place is a tie band | 12 users share the 14-post count on the cut |
+| **M4** | Best platform among ≥ 30,000-follower accounts | **Instagram** — 3,692.1 per post |
+| **M4b** | …and it survives every threshold | Instagram wins at 25k, 30k, 35k, 40k and 45k |
+| **M5** | Shares greater than likes + comments combined | **1,047 posts**; top 20 returned, worst excess 1,805 shares |
+| **M5b** | …and the trap this question sets | reading a blank like count as 0 reports 2,201 instead — 1,154 of them exist only in the missing data |
+| **H1** | Users averaging > 2× the overall average engagement | **no user qualifies** — the best is 1.806× the 3,623.72 baseline |
+| **H1c** | …so where does the question have an answer? | 145 users clear 1.25×, 8 clear 1.5×, 1 clears 1.75×, 0 clear 2× |
+| **H2** | Top 3 users by total engagement, in every location | **99 rows** — 3 for each of 33 locations |
+| **H2b** | …and how contested the podium is | Tokyo's 3rd place beats 4th by 0.08% |
+| **H3** | Posts at ≥ 2× their own platform's average engagement | **56 posts**, each judged against its own platform mean |
+| **H3b** | …the bar is derived, not given | it ranges from 7,346 (Instagram) to 7,123 (Twitter) |
+| **H4** | Under-5,000-follower users in the top engagement decile | **17 users**; decile floor 38,765 |
+| **H4b** | …is that an artefact of NTILE? | no — an explicit percentile gives the same 17 users |
+| **H5** | Potentially corrupted posts, by defect family | **4,418 posts** from the raw intake file (4 families) |
+| **H5b** | …reconciling with the Phase-1 inventory | 525 negative likes · 1,846 missing platforms · 1,770 blank text bodies · 1,004 HTML rows — the same counts Phase 1 recorded |
+| **H5c** | …the worst rows | 20 posts carry three defects at once |
+| **H6** | Small accounts, above-average engagement, one over-shared post | **82 users** from a 1,500-user funnel |
+| **H6b** | …the funnel | 287 have < 10k followers · 748 beat the overall average · 1045 own an over-shared post → 82 satisfy all three |
+
+**Three things in this set are worth more than the answers.**
+
+- **H1 returns zero rows, and that is the answer.** The 2× bar is
+  7,247.43 against a best user average of
+  6,545.50. Rather than reach for a friendlier
+  definition, the query prints its own baseline and threshold, proves the gap is
+  arithmetic, and adds a threshold ladder so the reader can see where the
+  question *does* have an answer.
+- **M5 is a trap with a price tag.** 2,201 "anomalies"
+  appear if a blank like count is read as zero; 1,154
+  of them exist only because the field is missing, and the reconciliation query
+  proves the arithmetic gap equals that count exactly.
+- **H5 cannot be asked of the cleaned table.** Cleaning is the step that removed
+  the corruption, so the anomalies are detected on a verbatim staging table of
+  the 12,360 intake rows, using the same SQL predicate that populated the
+  inventory. The per-family counts match the Phase-1 corruption log exactly.
+
+Six findings were produced and then **rejected by their own companions**: the
+platform leader (E1b), the platform ranking (E3b), the follower advantage (M2b),
+the location ranking (M1b), the over-sharing alarm (M5b) and the 2× power users
+(H1b/H1c). They are listed in full in
+[the report](output/Phase2_ChallengeSet_Report.pdf) — the rejections are the work.
+
+### Form upload set
+
+`submission/phase2/` holds the four slots the submission form asks for, each
+labelled with the question numbers it answers:
+
+| Slot | File | Format |
+|---|---|---|
+| SQL query | `Phase2_Slot1_SQL_Queries.pdf` | PDF |
+| Output screenshots | `Phase2_Slot2_Output_Screenshots_1of5.jpeg` … `_5of5.jpeg` | JPEG ×5 |
+| Explanation of logic | `Phase2_Slot3_Logic_Explanation.pdf` | PDF |
+| Insight report | `Phase2_Slot4_Insight_Report.pdf` | PDF |
+
+The form accepts at most five image files, so the 33 result sets are composited
+into five labelled sheets rather than uploaded individually — every sheet names
+the question (E1, M3, H6 …) above its result. Sizes, SHA-256 prefixes and the
+upload order are in [`submission/phase2/MANIFEST.md`](submission/phase2/MANIFEST.md);
+five tests assert the form's own constraints (JPEG only, ≤ 5 images, ≤ 10 MB,
+declared format matches the bytes).
+
+---
+
 ## What we tested and rejected
 
 The most useful thing a data engineer does is kill their own nice-looking
@@ -303,16 +397,19 @@ published as a negative result.
 data/raw/          the two recovered files, byte-identical to the site
 data/clean/        clean CSVs + JSON · repair_log.csv · data_quality_report.md
                    cleaning_summary.json · the empty-text hold-out CSV
-src/               10 scripts: config, clean_data, eda, build_db, run_sql,
-                   make_screenshots, build_report, make_notebook,
-                   verify_source, make_submission
+src/               11 scripts: config, clean_data, eda, build_db, run_sql,
+                   make_screenshots, build_report, build_phase2_report,
+                   make_notebook, verify_source, make_submission
 queries/           challenges.sql        -- 12 queries, each with a logic note
+                   phase2_challenges.sql -- 16 E/M/H challenges + 17 companions
 notebooks/         01_data_cleaning_eda.ipynb   -- executed, outputs attached
 docs/              cleaning_decisions.md · schema_design.md · recovery_walkthrough.md
-tests/             test_pipeline.py      -- 21 invariant tests
+tests/             test_pipeline.py      -- 49 invariant tests
 forensic/          app.js + index.html captured from the site (evidence)
-output/            figures/ · screenshots/ · social_engine.db · both PDFs · sql_outputs.md
-submission/        the form-upload set + MANIFEST.md (regenerated, git-ignored)
+output/            figures/ · screenshots/ · social_engine.db · three PDFs ·
+                   sql_outputs.md · phase2_sql_outputs.md
+submission/        phase1 = form-upload set (git-ignored)
+submission/phase2/ the Phase-2 upload set: 3 PDFs + 5 JPEG sheets + MANIFEST.md
 ```
 
 **Form upload set** — `./run_all.sh` builds `submission/`: the cleaned dataset,

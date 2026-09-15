@@ -47,6 +47,7 @@ transformation, and explore it.
 | EDA figures + stats | `output/figures/`, `output/eda_stats.json` |
 | EDA PDF report | `output/Phase1_EDA_Report.pdf` |
 | SQL phase | `queries/challenges.sql`, `output/Phase2_Insight_Report.pdf` |
+| Phase 2 challenge set | `queries/phase2_challenges.sql`, `output/Phase2_ChallengeSet_Report.pdf` |
 
 > **This notebook is the documented workflow, not a second implementation.**
 > It imports the functions from `src/clean_data.py` and applies them step by
@@ -306,7 +307,9 @@ C.append(md("""## 5 · Phase 2 bridge — the same table, in SQL
 The cleaned CSV becomes a schema'd SQLite database with PKs, FKs, CHECK
 constraints, a hashtag relation and views; `queries/challenges.sql` then answers
 trend / anomaly / grouping / correlation questions with CTEs and window
-functions."""))
+functions, and `queries/phase2_challenges.sql` answers the E/M/H challenge set
+(including the corruption questions, which read a verbatim staging table because
+cleaning is what removed the evidence)."""))
 
 C.append(code('''!python {ROOT / "src" / "build_db.py"}
 !python {ROOT / "src" / "run_sql.py"}'''))
@@ -331,9 +334,12 @@ C.append(code('''# The query that protects the submission: is the amplification 
 # Uses the SAME parser that executes the phase, so the notebook cannot run a
 # different SQL from the one in the deliverable.
 import run_sql
-queries = {q["id"]: q for q in run_sql.parse(run_sql.SQL.read_text())}
+queries = {q["id"]: q
+           for src in run_sql.SOURCES if src["sql"].exists()
+           for q in run_sql.parse(src["sql"].read_text())}
 print("parsed", len(queries), "queries;",
       sum(1 for q in queries.values() if q["logic"]), "carry a written logic note")
+print("sets :", ", ".join(src["sql"].name for src in run_sql.SOURCES if src["sql"].exists()))
 row = con.execute(queries["Q5"]["sql"]).fetchone()
 cols = [d[0] for d in con.execute(queries["Q5"]["sql"]).description]
 for c, v in zip(cols, row):

@@ -72,11 +72,36 @@ def main() -> int:
     print("\n  local SHA-256 (quote these in the submission form):")
     for p in sorted(DATA_RAW.glob("*.csv")):
         print(f"    {sha(p)}  {p.name}")
-    (ROOT / "output").mkdir(exist_ok=True)
-    (ROOT / "output" / "provenance.json").write_text(json.dumps({
+
+    hashes = {p.name: sha(p) for p in sorted(DATA_RAW.glob("*.csv"))}
+    out = ROOT / "output"
+    out.mkdir(exist_ok=True)
+    record_path = out / "provenance.json"
+
+    # A run WITHOUT connectivity must not erase a run that had it. The two are
+    # only interchangeable when the local bytes are unchanged, which is exactly
+    # what local_sha256 proves -- so the earlier counts are carried forward only
+    # if every hash still matches, and the fact that they were carried is
+    # recorded rather than hidden.
+    carried = False
+    note = None
+    if skipped and not ok and record_path.exists():
+        prev = json.loads(record_path.read_text())
+        if prev.get("local_sha256") == hashes and prev.get("matched_remote"):
+            ok, fail = prev["matched_remote"], prev.get("mismatched", 0)
+            carried = True
+            note = ("the site was unreachable on this run; the counts above come "
+                    "from the run that had connectivity, and local_sha256 is "
+                    "unchanged, which is what makes carrying them forward valid")
+            print("\n  (offline run: keeping the earlier successful verification, "
+                  "same local hashes)")
+
+    record_path.write_text(json.dumps({
         "source_base": SOURCE_BASE, "paths": DATASET_PATHS,
-        "local_sha256": {p.name: sha(p) for p in sorted(DATA_RAW.glob("*.csv"))},
+        "local_sha256": hashes,
         "matched_remote": ok, "mismatched": fail, "site_unreachable": skipped,
+        "carried_forward": carried,
+        **({"note": note} if note else {}),
     }, indent=2))
     print(f"\n  {ok} matched · {fail} mismatched · {skipped} unverifiable (offline)")
     print("  wrote output/provenance.json")

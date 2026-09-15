@@ -15,6 +15,14 @@ import json
 from pathlib import Path
 
 import pandas as pd
+from reportlab import rl_config
+
+# Deterministic PDF metadata. Reportlab otherwise stamps each file with a build
+# timestamp, so two runs over identical data produce different bytes and the
+# committed PDFs churn on every rebuild. Every PDF in this repo is built through
+# this module, so the flag is set once, here.
+rl_config.invariant = 1
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
@@ -163,7 +171,7 @@ def build_phase1():
         "<font color='#0b6b5e'><b>Dataset 01 — corrupted social-media intake: "
         "recovered, cleaned and explored</b></font>", "sub"))
 
-    A(P(f"Team <b>{TEAM_NAME}</b> · {", ".join(TEAM_MEMBERS)}", "sub"))
+    A(P(f"Team <b>{TEAM_NAME}</b> · {', '.join(TEAM_MEMBERS)}", "sub"))
     A(P("1 · How the dataset was recovered", "h1"))
     A(rich(
         "The rulebook states the corrupted dataset is <i>not</i> handed out and must be "
@@ -428,7 +436,7 @@ def build_phase2():
         "<font color='#0b6b5e'><b>SQL reasoning over the restored Dataset 01 — 12 queries, "
         "live outputs</b></font>", "sub"))
 
-    A(P(f"Team <b>{TEAM_NAME}</b> · {", ".join(TEAM_MEMBERS)}", "sub"))
+    A(P(f"Team <b>{TEAM_NAME}</b> · {', '.join(TEAM_MEMBERS)}", "sub"))
     A(P("1 · Schema, and why it is shaped this way", "h1"))
     A(rich("The Phase-1 output is two flat CSVs. Loading them verbatim and reaching for "
            "<font name='Courier'>text_content LIKE '%#Tag%'</font> in every query would make "

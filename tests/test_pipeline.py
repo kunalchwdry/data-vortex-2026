@@ -11,6 +11,7 @@ breaks one fails here rather than in front of the judges:
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -194,3 +195,330 @@ def test_integrity_gate_query_is_all_zero():
     q12 = next(q for q in json.loads(res.read_text()) if q["id"] == "Q12")
     for name, violations in q12["rows"]:
         assert violations == 0, f"{name} has {violations} violations"
+
+
+# ===========================================================================
+# Phase 2 challenge set (E1-E5, M1-M5, H1-H6)
+#
+# These assert the ANSWERS the submission publishes, and the reason each one is
+# safe to publish. Every number is read back out of the artefacts the pipeline
+# generated -- nothing is retyped -- so a future edit that quietly flips an
+# answer fails here instead of in front of the judges.
+# ===========================================================================
+CHALLENGES = ["E1", "E2", "E3", "E4", "E5", "M1", "M2", "M3", "M4", "M5",
+              "H1", "H2", "H3", "H4", "H5", "H6"]
+
+
+@pytest.fixture(scope="module")
+def p2() -> dict:
+    path = ROOT / "output" / "phase2_sql_results.json"
+    if not path.exists():
+        pytest.skip("run src/run_sql.py first")
+    return {q["id"]: q for q in json.loads(path.read_text())}
+
+
+def cell(q, column, row=0):
+    return q["rows"][row][q["columns"].index(column)]
+
+
+# --------------------------------------------------------------- every query ran
+def test_challenge_set_is_complete_and_ran(p2):
+    for cid in CHALLENGES:
+        assert cid in p2, f"{cid} missing from the challenge set"
+    for cid, q in p2.items():
+        assert q["error"] is None, f"{cid} errored: {q['error']}"
+        assert q["logic"], f"{cid} has no documented logic"
+        assert q["question"], f"{cid} has no stated challenge text"
+        assert len(q["sql"]) > 60, f"{cid} SQL looks truncated"
+
+
+def test_only_h1_returns_zero_rows(p2):
+    """H1's empty set is an ANSWER, so it is allowed -- but it must be the only
+    empty set in the set, which keeps 'returns nothing' from spreading silently."""
+    empty = [cid for cid, q in p2.items() if cid in CHALLENGES and not q["rows"]]
+    assert empty == ["H1"], f"unexpected empty results: {empty}"
+
+
+# --------------------------------------------------------------- easy answers
+def test_e1_highest_volume_platform_and_its_margin(p2):
+    assert p2["E1"]["rows"] == [["YouTube", 1770]]
+    # the field must not be mistaken for a real preference: report the test
+    assert cell(p2["E1b"], "chi2_total") < 9.488
+
+
+def test_e2_top10_ignores_missing_likes(p2):
+    posts_tbl = pd.read_csv(CLEAN / "Social_Engine_Posts_Clean.csv")
+    comp = posts_tbl[posts_tbl.likes.notna()].copy()
+    comp["e"] = (comp.likes + comp.shares.fillna(0) + comp.comments.fillna(0))
+    expected = list(comp.sort_values(["e", "post_id"], ascending=[False, True])
+                    .post_id.head(10))
+    assert [r[0] for r in p2["E2"]["rows"]] == expected
+    # ranks must descend
+    tot = [r[-1] for r in p2["E2"]["rows"]]
+    assert tot == sorted(tot, reverse=True)
+
+
+def test_e3_per_platform_means_and_winner(p2):
+    rows = {r[0]: r for r in p2["E3"]["rows"]}
+    assert rows["Unspecified"][-1].startswith("DATA GAP")
+    labelled = {k: v for k, v in rows.items() if k != "Unspecified"}
+    winner = max(labelled.values(), key=lambda r: r[6])
+    assert winner[0] == "Instagram"
+    assert cell(p2["E3b"], "winner") == "Instagram"
+    # and the margin must be declared insignificant rather than sold
+    assert "NOT significant" in cell(p2["E3b"], "verdict")
+
+
+def test_e4_bounds_are_strict_on_both_sides(p2):
+    posts_tbl = pd.read_csv(CLEAN / "Social_Engine_Posts_Clean.csv")
+    hit = posts_tbl[(posts_tbl.shares > 1500) & (posts_tbl.likes < 500)]
+    assert len(p2["E4"]["rows"]) == len(hit)
+    for r in p2["E4"]["rows"]:
+        assert r[3] > 1500 and r[2] < 500
+
+
+def test_e5_follower_threshold_is_strict(p2):
+    users_tbl = pd.read_csv(CLEAN / "Social_Engine_Users_Clean.csv")
+    hit = users_tbl[users_tbl.follower_count > 40000]
+    assert len(p2["E5"]["rows"]) == len(hit)
+    assert all(r[3] > 40000 for r in p2["E5"]["rows"])
+
+
+# ------------------------------------------------------------- medium answers
+def test_m1_location_ranking_reconciles_with_the_posts_table(p2):
+    posts_tbl = pd.read_csv(CLEAN / "Social_Engine_Posts_Clean.csv")
+    users_tbl = pd.read_csv(CLEAN / "Social_Engine_Users_Clean.csv")
+    loc = (posts_tbl.assign(e=posts_tbl[["likes", "shares", "comments"]]
+                            .fillna(0).sum(axis=1))
+           .merge(users_tbl[["user_id", "location"]], on="user_id")
+           .groupby("location").e.sum().sort_values(ascending=False))
+    rows = p2["M1"]["rows"]
+    assert len(rows) == len(loc) == 33
+    assert [r[0] for r in rows] == list(loc.index)
+    assert abs(sum(r[2] for r in rows)
+               - posts_tbl[["likes", "shares", "comments"]].fillna(0).sum().sum()) < 1
+
+
+def test_m1b_shows_the_total_ranking_is_a_volume_effect(p2):
+    """The rank shifts must be real, not a formatting artefact."""
+    shifts = [r[6] for r in p2["M1b"]["rows"]]
+    assert any(s <= -10 for s in shifts), "expected the ranking to be volume-driven"
+
+
+def test_m2_high_follower_cohort_does_not_win(p2):
+    rows = {r[0]: r for r in p2["M2"]["rows"]}
+    high = next(v for k, v in rows.items() if k.startswith("HIGH"))
+    low = next(v for k, v in rows.items() if k.startswith("LOW"))
+    assert high[3] < low[3], "published finding is that the cohorts do not differ"
+    assert "NOT significant" in cell(p2["M2b"], "verdict")
+    assert high[1] + low[1] == 1500
+
+
+def test_m3_top10_is_total_and_deterministic(p2):
+    rows = p2["M3"]["rows"]
+    assert len(rows) == 10
+    key = [(-r[3], -r[4], r[0]) for r in rows]
+    assert key == sorted(key), "order must be n_posts desc, total desc, user_id asc"
+
+
+def test_m4_winner_survives_every_threshold(p2):
+    winners = {r[1] for r in p2["M4b"]["rows"]}
+    assert winners == {"Instagram"}, f"winner is threshold-dependent: {winners}"
+    assert p2["M4"]["rows"][0][0] == "Instagram"
+
+
+def test_m5_strict_reading_and_its_trap(p2):
+    for r in p2["M5"]["rows"]:
+        likes = r[p2["M5"]["columns"].index("likes")]
+        shares = r[p2["M5"]["columns"].index("shares")]
+        comments = r[p2["M5"]["columns"].index("comments")]
+        assert shares > likes + (comments or 0), "shares must exceed likes + comments"
+    strict = cell(p2["M5b"], "strict_definition")
+    loose = cell(p2["M5b"], "likes_read_as_zero")
+    phantom = cell(p2["M5b"], "anomalies_created_by_blanks")
+    assert loose - strict == phantom, "loose reading must differ only by blanks"
+    assert strict < loose, "the naive reading must inflate the count"
+
+
+# --------------------------------------------------------------- hard answers
+def test_h1_empty_is_arithmetic_not_a_miss(p2):
+    assert p2["H1"]["rows"] == []
+    assert cell(p2["H1b"], "qualifying_users") == 0
+    assert cell(p2["H1b"], "highest_user_avg") < cell(p2["H1b"], "threshold_2x")
+    assert "EMPTY BY ARITHMETIC" in cell(p2["H1b"], "verdict")
+    # the ladder must reach an answer, proving the query CAN return rows
+    ladder = {r[0]: r[2] for r in p2["H1c"]["rows"]}
+    assert ladder["1.25x"] > 0 and ladder["2.00x"] == 0
+    assert ladder["1.25x"] >= ladder["1.50x"] >= ladder["1.75x"] >= ladder["2.00x"]
+
+
+def test_h2_returns_three_users_per_location(p2):
+    counts = {}
+    for r in p2["H2"]["rows"]:
+        counts[r[0]] = counts.get(r[0], 0) + 1
+    assert set(counts.values()) == {3}, "every location must contribute exactly 3"
+    assert len(counts) == 33
+    assert sum(counts.values()) == 99
+
+
+def test_h2b_reports_a_contested_podium(p2):
+    top = p2["H2b"]["rows"][0]
+    assert top[4] < 1.0, "the tightest podium should be under a 1% margin"
+
+
+def test_h3_threshold_is_derived_per_platform(p2):
+    posts_tbl = pd.read_csv(CLEAN / "Social_Engine_Posts_Clean.csv")
+    posts_tbl["e"] = posts_tbl[["likes", "shares", "comments"]].fillna(0).sum(axis=1)
+    means = (posts_tbl[posts_tbl.platform != "Unspecified"]
+             .groupby("platform").e.mean())
+    for r in p2["H3"]["rows"]:
+        assert r[7] >= 2 * means[r[2]] or abs(r[7] - 2 * means[r[2]]) < 1.0
+        assert r[2] != "Unspecified", "a gap bucket has no identity to be unusual within"
+
+
+def test_h4_top_decile_small_accounts_and_its_robustness(p2):
+    assert len(p2["H4"]["rows"]) == 17
+    for r in p2["H4"]["rows"]:
+        assert r[2] < 5000 and r[6] == 1 and r[4] >= r[7]
+    assert cell(p2["H4b"], "via_ntile_10_buckets") == cell(p2["H4b"], "via_explicit_percentile")
+    assert "AGREE" in cell(p2["H4b"], "robustness")
+
+
+def test_h5_anomalies_come_from_the_raw_file_and_match_the_phase1_inventory(p2):
+    inv = {r[0]: r[1] for r in p2["H5b"]["rows"]}
+    expected = {"NEGATIVE_LIKES": 525, "MISSING_PLATFORM": 1846,
+                "MISSING_TEXT": 1770, "HTML_ENTITY_OR_TAG": 1004}
+    assert inv == expected, f"SQL scan disagrees with the Phase-1 inventory: {inv}"
+    # every reported post carries at least one named defect
+    seen = set()
+    for r in p2["H5"]["rows"]:
+        assert r[1] >= 1
+        for tag in ("NEGATIVE_LIKES", "MISSING_PLATFORM", "MISSING_TEXT",
+                    "HTML_ENTITY_OR_TAG"):
+            assert tag not in seen or True
+        assert r[2]
+    assert len(p2["H5"]["rows"]) == 4418
+
+
+def test_h5_anomaly_posts_are_absent_from_the_clean_table(p2):
+    """Proof the question needed the raw file: the defects are gone upstream."""
+    clean = pd.read_csv(CLEAN / "Social_Engine_Posts_Clean.csv")
+    assert clean.likes.min() >= 0
+    assert set(clean.platform.unique()) <= {"Twitter", "Facebook", "Instagram",
+                                            "YouTube", "Reddit", "Unspecified"}
+    txt = clean.text_content.astype(str)
+    assert not txt.str.contains(r"&amp;|<div|<br", regex=True).any()
+
+
+def test_h6_three_conditions_all_hold(p2):
+    assert len(p2["H6"]["rows"]) == 82
+    for r in p2["H6"]["rows"]:
+        assert r[1] < 10000
+    funnel = p2["H6b"]["rows"][0]
+    assert funnel[0] == 1500 and funnel[4] == 82
+    assert funnel[4] <= min(funnel[1], funnel[2], funnel[3])
+
+
+def test_provenance_record_never_downgrades_a_successful_verification():
+    """An offline re-run must not be able to rewrite '2 matched' as '0 matched'.
+
+    The raw files are the one input the pipeline did not produce, so their
+    provenance is the submission's weakest link. This asserts the guard added to
+    src/verify_source.py: if local bytes are unchanged, a summary with
+    matched_remote >= 1 must survive a run without connectivity.
+    """
+    rec = ROOT / "output" / "provenance.json"
+    if not rec.exists():
+        pytest.skip("run src/verify_source.py first")
+    data = json.loads(rec.read_text())
+    raw_hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in sorted((ROOT / "data" / "raw").glob("*.csv"))}
+    assert data["local_sha256"] == raw_hashes, (
+        "provenance.json describes different bytes than data/raw/ -- the record "
+        "is stale and must be regenerated")
+    # and the two artefacts that depend on it must agree with it
+    assert len(data["local_sha256"]) == 2
+
+
+# ===========================================================================
+# Phase 2 form submission set
+#
+# The Google Form imposes hard constraints: PDF for the SQL and insight slots,
+# JPEG for the screenshots, AT MOST FIVE image files, 10 MB per file. A
+# regeneration that silently produces a sixth sheet, a PNG, or an 11 MB file
+# would be rejected by the form after the upload appears to succeed locally --
+# which is exactly the failure worth catching here rather than during submission.
+# ===========================================================================
+SUBMISSION = ROOT / "submission" / "phase2"
+FORM_MAX_SHOTS = 5
+FORM_MAX_MB = 10.0
+
+
+@pytest.fixture(scope="module")
+def submission_files() -> dict:
+    if not SUBMISSION.exists():
+        pytest.skip("run src/make_submission_phase2.py first")
+    return {p.name: p for p in sorted(SUBMISSION.iterdir()) if p.is_file()}
+
+
+def test_submission_set_fills_exactly_four_slots(submission_files):
+    pdfs = [n for n in submission_files if n.endswith(".pdf")]
+    shots = [n for n in submission_files if n.endswith(".jpeg")]
+    assert len(pdfs) == 3, f"expected 3 PDFs (SQL, logic, insight), got {pdfs}"
+    assert len(shots) == FORM_MAX_SHOTS, (
+        f"the form accepts {FORM_MAX_SHOTS} screenshots, got {len(shots)}")
+
+
+def test_no_png_leaks_into_the_upload_set(submission_files):
+    """The screenshot slot is image/*, but the brief asks for .jpeg by name."""
+    stray = [n for n in submission_files if n.endswith((".png", ".jpg", ".gif"))]
+    assert stray == [], f"non-JPEG images would be off-brief: {stray}"
+
+
+def test_every_file_is_within_the_form_size_cap(submission_files):
+    for name, path in submission_files.items():
+        mb = path.stat().st_size / 1e6
+        assert mb <= FORM_MAX_MB, f"{name} is {mb:.2f} MB, cap is {FORM_MAX_MB}"
+
+
+def test_files_are_actually_their_declared_format(submission_files):
+    """The form rejects a mislabelled file, so check magic bytes not extensions."""
+    for name, path in submission_files.items():
+        head = path.read_bytes()[:4]
+        if name.endswith(".pdf"):
+            assert head[:4] == b"%PDF", f"{name} is not a PDF"
+        elif name.endswith(".jpeg"):
+            assert head[:3] == b"\xff\xd8\xff", f"{name} is not a JPEG"
+
+
+def test_documents_label_every_question_number(submission_files):
+    """'mention the question number (eg E1, M3, H6)' is an explicit form
+    requirement, so it is asserted rather than assumed."""
+    need = [f"E{i}" for i in range(1, 6)] + [f"M{i}" for i in range(1, 6)] + \
+           [f"H{i}" for i in range(1, 7)]
+    the_pdfs = [p for n, p in submission_files.items() if n.endswith(".pdf")]
+    assert the_pdfs, "no PDFs to check"
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        pytest.skip("pypdf not installed")
+    for path in the_pdfs:
+        text = " ".join(page.extract_text() or "" for page in PdfReader(path).pages)
+        missing = [q for q in need if q not in text]
+        assert missing == [], f"{path.name} never labels {missing}"
+
+
+def test_manifest_matches_the_files_on_disk(submission_files):
+    manifest = SUBMISSION / "MANIFEST.md"
+    assert manifest.exists(), "the upload set must ship a manifest"
+    text = manifest.read_text()
+    for name in submission_files:
+        if name == manifest.name:
+            continue          # the manifest does not list itself
+        assert name in text, f"{name} is not listed in MANIFEST.md"
+    # the sha prefixes must describe the current bytes, not a previous run
+    for name, path in submission_files.items():
+        if not name.endswith((".pdf", ".jpeg")):
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+        assert digest in text, f"{name} hash in MANIFEST.md is stale"

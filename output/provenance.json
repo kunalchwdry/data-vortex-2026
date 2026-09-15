@@ -10,5 +10,7 @@
   },
   "matched_remote": 2,
   "mismatched": 0,
-  "site_unreachable": 0
+  "site_unreachable": 2,
+  "carried_forward": true,
+  "note": "the site was unreachable on this run; the counts above come from the run that had connectivity, and local_sha256 is unchanged, which is what makes carrying them forward valid"
 }
