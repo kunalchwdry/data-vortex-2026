@@ -15,6 +15,14 @@ import json
 from pathlib import Path
 
 import pandas as pd
+from reportlab import rl_config
+
+# Deterministic PDF metadata. Reportlab otherwise stamps each file with a build
+# timestamp, so two runs over identical data produce different bytes and the
+# committed PDFs churn on every rebuild. Every PDF in this repo is built through
+# this module, so the flag is set once, here.
+rl_config.invariant = 1
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import A4

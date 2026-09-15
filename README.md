@@ -21,6 +21,7 @@
 | **Phase 1** | cleaned dataset + EDA report + this repo |
 | **Phase 2** | `queries/challenges.sql` + `output/Phase2_Insight_Report.pdf` |
 | **Phase 2 challenge set** | `queries/phase2_challenges.sql` + `output/Phase2_ChallengeSet_Report.pdf` |
+| **Phase 2 form upload set** | [`submission/phase2/`](submission/phase2/MANIFEST.md) — 4 slots, 8 files, labelled E1–H6 |
 
 > **Every number in this README is generated.** The tables and figures below are
 > produced by `./run_all.sh` from the two recovered CSVs — nothing is typed by
@@ -349,6 +350,25 @@ the location ranking (M1b), the over-sharing alarm (M5b) and the 2× power users
 (H1b/H1c). They are listed in full in
 [the report](output/Phase2_ChallengeSet_Report.pdf) — the rejections are the work.
 
+### Form upload set
+
+`submission/phase2/` holds the four slots the submission form asks for, each
+labelled with the question numbers it answers:
+
+| Slot | File | Format |
+|---|---|---|
+| SQL query | `Phase2_Slot1_SQL_Queries.pdf` | PDF |
+| Output screenshots | `Phase2_Slot2_Output_Screenshots_1of5.jpeg` … `_5of5.jpeg` | JPEG ×5 |
+| Explanation of logic | `Phase2_Slot3_Logic_Explanation.pdf` | PDF |
+| Insight report | `Phase2_Slot4_Insight_Report.pdf` | PDF |
+
+The form accepts at most five image files, so the 33 result sets are composited
+into five labelled sheets rather than uploaded individually — every sheet names
+the question (E1, M3, H6 …) above its result. Sizes, SHA-256 prefixes and the
+upload order are in [`submission/phase2/MANIFEST.md`](submission/phase2/MANIFEST.md);
+five tests assert the form's own constraints (JPEG only, ≤ 5 images, ≤ 10 MB,
+declared format matches the bytes).
+
 ---
 
 ## What we tested and rejected
@@ -384,11 +404,12 @@ queries/           challenges.sql        -- 12 queries, each with a logic note
                    phase2_challenges.sql -- 16 E/M/H challenges + 17 companions
 notebooks/         01_data_cleaning_eda.ipynb   -- executed, outputs attached
 docs/              cleaning_decisions.md · schema_design.md · recovery_walkthrough.md
-tests/             test_pipeline.py      -- 42 invariant tests
+tests/             test_pipeline.py      -- 49 invariant tests
 forensic/          app.js + index.html captured from the site (evidence)
 output/            figures/ · screenshots/ · social_engine.db · three PDFs ·
                    sql_outputs.md · phase2_sql_outputs.md
-submission/        the form-upload set + MANIFEST.md (regenerated, git-ignored)
+submission/        phase1 = form-upload set (git-ignored)
+submission/phase2/ the Phase-2 upload set: 3 PDFs + 5 JPEG sheets + MANIFEST.md
 ```
 
 **Form upload set** — `./run_all.sh` builds `submission/`: the cleaned dataset,

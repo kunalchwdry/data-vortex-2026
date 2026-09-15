@@ -22,7 +22,7 @@ ORDER BY n_posts DESC, platform ASC
 LIMIT 1
 ```
 
-**Output** (1 row, executed in 0.89 ms):
+**Output** (1 row, executed in 1.07 ms):
 
 | `platform` | `n_posts` |
 |---|---|
@@ -74,7 +74,7 @@ FROM terms
 ORDER BY n_posts DESC
 ```
 
-**Output** (5 rows, executed in 3.95 ms):
+**Output** (5 rows, executed in 4.19 ms):
 
 | `platform` | `n_posts` | `pct_share` | `expected_if_uniform` | `chi2_term` | `chi2_total` | `df` | `verdict_at_5pct` |
 |---|---|---|---|---|---|---|---|
@@ -105,7 +105,7 @@ ORDER BY total_engagement DESC, post_id ASC
 LIMIT 10
 ```
 
-**Output** (10 rows, executed in 1.88 ms):
+**Output** (10 rows, executed in 2.47 ms):
 
 | `post_id` | `user_id` | `platform` | `likes` | `shares` | `comments` | `total_engagement` |
 |---|---|---|---|---|---|---|
@@ -150,7 +150,7 @@ SELECT (SELECT COUNT(*) FROM ranked)                             AS comparable_p
 FROM cut
 ```
 
-**Output** (1 row, executed in 5.33 ms):
+**Output** (1 row, executed in 6.44 ms):
 
 | `comparable_posts` | `best_engagement` | `tenth_place_engagement` | `posts_within_1pct_of_cut` | `best_over_tenth_pct` |
 |---|---|---|---|---|
@@ -180,7 +180,7 @@ GROUP BY platform
 ORDER BY avg_total_engagement DESC
 ```
 
-**Output** (6 rows, executed in 6.84 ms):
+**Output** (6 rows, executed in 9.80 ms):
 
 | `platform` | `n_posts` | `rows_with_likes` | `avg_likes` | `avg_shares` | `avg_comments` | `avg_total_engagement` | `engagement_rank` | `eligibility` |
 |---|---|---|---|---|---|---|---|---|
@@ -242,7 +242,7 @@ SELECT winner,
 FROM test
 ```
 
-**Output** (1 row, executed in 6.73 ms):
+**Output** (1 row, executed in 9.32 ms):
 
 | `winner` | `winner_avg_engagement` | `runner_up` | `runner_up_avg_engagement` | `absolute_gap` | `gap_pct` | `z_stat` | `verdict` |
 |---|---|---|---|---|---|---|---|
@@ -267,7 +267,7 @@ WHERE shares > 1500
 ORDER BY shares DESC, post_id ASC
 ```
 
-**Output** (214 rows, executed in 1.41 ms):
+**Output** (214 rows, executed in 2.03 ms):
 
 | `post_id` | `platform` | `likes` | `shares` | `comments` |
 |---|---|---|---|---|
@@ -321,7 +321,7 @@ GROUP BY p.platform
 ORDER BY pct_of_platform DESC
 ```
 
-**Output** (6 rows, executed in 11.35 ms):
+**Output** (6 rows, executed in 17.58 ms):
 
 | `platform` | `n_posts` | `flagged_posts` | `pct_of_platform` |
 |---|---|---|---|
@@ -349,7 +349,7 @@ WHERE follower_count > 40000
 ORDER BY follower_count DESC, user_id ASC
 ```
 
-**Output** (293 rows, executed in 0.47 ms):
+**Output** (293 rows, executed in 0.56 ms):
 
 | `user_id` | `location` | `language` | `follower_count` |
 |---|---|---|---|
@@ -397,7 +397,7 @@ GROUP BY u.location
 ORDER BY total_engagement DESC, u.location ASC
 ```
 
-**Output** (33 rows, executed in 10.21 ms):
+**Output** (33 rows, executed in 12.98 ms):
 
 | `location` | `n_posts` | `total_engagement` | `engagement_rank` |
 |---|---|---|---|
@@ -461,7 +461,7 @@ FROM ranked
 ORDER BY rank_by_total
 ```
 
-**Output** (33 rows, executed in 10.77 ms):
+**Output** (33 rows, executed in 14.05 ms):
 
 | `location` | `n_posts` | `total_engagement` | `avg_engagement_per_post` | `rank_by_total` | `rank_by_avg_per_post` | `rank_shift` |
 |---|---|---|---|---|---|---|
@@ -523,7 +523,7 @@ FROM cohorts
 ORDER BY avg_engagement DESC
 ```
 
-**Output** (2 rows, executed in 14.53 ms):
+**Output** (2 rows, executed in 17.52 ms):
 
 | `cohort` | `n_users` | `n_posts` | `avg_engagement_per_post` | `total_engagement` | `sd_engagement` |
 |---|---|---|---|---|---|
@@ -573,7 +573,7 @@ SELECT ROUND(low_mean, 2)  AS low_follower_avg,
 FROM pair
 ```
 
-**Output** (1 row, executed in 11.57 ms):
+**Output** (1 row, executed in 14.93 ms):
 
 | `low_follower_avg` | `high_follower_avg` | `difference` | `difference_pct` | `z_stat` | `verdict` |
 |---|---|---|---|---|---|
@@ -597,7 +597,7 @@ ORDER BY n_posts DESC, total_engagement DESC, user_id ASC
 LIMIT 10
 ```
 
-**Output** (10 rows, executed in 10.27 ms):
+**Output** (10 rows, executed in 12.63 ms):
 
 | `user_id` | `follower_count` | `location` | `n_posts` | `total_engagement` |
 |---|---|---|---|---|
@@ -640,7 +640,7 @@ SELECT (SELECT MAX(n_posts) FROM counts)                          AS busiest_use
 FROM cut
 ```
 
-**Output** (1 row, executed in 1.93 ms):
+**Output** (1 row, executed in 2.13 ms):
 
 | `busiest_user_posts` | `quietest_user_posts` | `tenth_place_posts` | `users_tied_at_the_cut` | `distinct_post_counts` |
 |---|---|---|---|---|
@@ -670,7 +670,7 @@ GROUP BY p.platform
 ORDER BY avg_engagement_per_post DESC
 ```
 
-**Output** (5 rows, executed in 9.73 ms):
+**Output** (5 rows, executed in 12.89 ms):
 
 | `platform` | `n_posts` | `avg_engagement_per_post` | `rank_within_cohort` |
 |---|---|---|---|
@@ -713,7 +713,7 @@ WHERE rn = 1
 ORDER BY follower_threshold
 ```
 
-**Output** (5 rows, executed in 18.03 ms):
+**Output** (5 rows, executed in 22.27 ms):
 
 | `follower_threshold` | `winning_platform` | `n_posts` | `avg_engagement_per_post` |
 |---|---|---|---|
@@ -747,7 +747,7 @@ ORDER BY excess_shares DESC, post_id ASC
 LIMIT 20
 ```
 
-**Output** (20 rows, executed in 1.66 ms):
+**Output** (20 rows, executed in 2.43 ms):
 
 | `post_id` | `user_id` | `platform` | `likes` | `shares` | `comments` | `excess_shares` | `share_to_reaction_ratio` |
 |---|---|---|---|---|---|---|---|
@@ -807,7 +807,7 @@ SELECT strict_count.n                                  AS strict_definition,
 FROM strict_count, loose_count, missing_like_count
 ```
 
-**Output** (1 row, executed in 4.10 ms):
+**Output** (1 row, executed in 5.66 ms):
 
 | `strict_definition` | `likes_read_as_zero` | `anomalies_created_by_blanks` | `arithmetic_gap` | `pct_of_loose_that_is_missing_data` | `reconciliation` |
 |---|---|---|---|---|---|
@@ -844,7 +844,7 @@ WHERE pu.avg_engagement > 2.0 * b.overall_avg_per_post
 ORDER BY pu.avg_engagement DESC, pu.user_id ASC
 ```
 
-**Output** (0 rows, executed in 9.40 ms):
+**Output** (0 rows, executed in 12.66 ms):
 
 _Query executed successfully and returned **0 rows**. The companion query below the challenge explains why the empty set is the arithmetic answer, not a bug._
 
@@ -886,7 +886,7 @@ SELECT ROUND(b.overall_avg_per_post, 2)          AS overall_avg_per_post,
 FROM baseline b
 ```
 
-**Output** (1 row, executed in 9.59 ms):
+**Output** (1 row, executed in 12.90 ms):
 
 | `overall_avg_per_post` | `threshold_2x` | `users_examined` | `highest_user_avg` | `highest_avg_user` | `highest_avg_as_multiple_of_baseline` | `qualifying_users` | `verdict` |
 |---|---|---|---|---|---|---|---|
@@ -922,7 +922,7 @@ CROSS JOIN baseline b
 ORDER BY m.multiple
 ```
 
-**Output** (4 rows, executed in 29.25 ms):
+**Output** (4 rows, executed in 38.60 ms):
 
 | `multiple` | `threshold` | `users_qualifying` |
 |---|---|---|
@@ -963,7 +963,7 @@ WHERE rank_in_location <= 3
 ORDER BY location ASC, rank_in_location ASC
 ```
 
-**Output** (99 rows, executed in 13.87 ms):
+**Output** (99 rows, executed in 23.28 ms):
 
 | `location` | `rank_in_location` | `user_id` | `follower_count` | `n_posts` | `total_engagement` |
 |---|---|---|---|---|---|
@@ -1028,7 +1028,7 @@ ORDER BY margin_pct ASC, location ASC
 LIMIT 8
 ```
 
-**Output** (8 rows, executed in 13.53 ms):
+**Output** (8 rows, executed in 20.80 ms):
 
 | `location` | `third_place` | `fourth_place` | `absolute_margin` | `margin_pct` |
 |---|---|---|---|---|
@@ -1072,7 +1072,7 @@ WHERE p.engagement >= 2.0 * pl.platform_avg_engagement
 ORDER BY multiple_of_platform_avg DESC, p.post_id ASC
 ```
 
-**Output** (56 rows, executed in 10.08 ms):
+**Output** (56 rows, executed in 13.67 ms):
 
 | `post_id` | `user_id` | `platform` | `likes` | `shares` | `comments` | `platform_avg_engagement` | `post_engagement` | `multiple_of_platform_avg` |
 |---|---|---|---|---|---|---|---|---|
@@ -1138,7 +1138,7 @@ LEFT JOIN hits h ON h.platform = pl.platform
 ORDER BY pct_of_platform DESC, pl.platform ASC
 ```
 
-**Output** (6 rows, executed in 13.12 ms):
+**Output** (6 rows, executed in 17.99 ms):
 
 | `platform` | `n_posts` | `platform_avg_engagement` | `exceptional_threshold` | `exceptional_posts` | `pct_of_platform` | `eligibility` |
 |---|---|---|---|---|---|---|
@@ -1197,7 +1197,7 @@ WHERE d.engagement_decile = 1
 ORDER BY d.total_engagement DESC, u.user_id ASC
 ```
 
-**Output** (17 rows, executed in 10.30 ms):
+**Output** (17 rows, executed in 12.85 ms):
 
 | `user_id` | `location` | `follower_count` | `n_posts` | `total_engagement` | `avg_engagement_per_post` | `engagement_decile` | `top_decile_floor_engagement` |
 |---|---|---|---|---|---|---|---|
@@ -1267,7 +1267,7 @@ SELECT (SELECT decile_floor FROM floor_value)          AS top_decile_floor_engag
             ELSE 'the definitions DISAGREE -- report the boundary as unstable' END AS robustness
 ```
 
-**Output** (1 row, executed in 12.98 ms):
+**Output** (1 row, executed in 15.03 ms):
 
 | `top_decile_floor_engagement` | `via_ntile_10_buckets` | `via_explicit_percentile` | `robustness` |
 |---|---|---|---|
@@ -1301,7 +1301,7 @@ FROM flags
 ORDER BY n_anomalies DESC, post_id ASC
 ```
 
-**Output** (4418 rows, executed in 10.59 ms):
+**Output** (4418 rows, executed in 10.70 ms):
 
 | `post_id` | `n_anomalies` | `anomaly_types` |
 |---|---|---|
@@ -1367,7 +1367,7 @@ LEFT JOIN distinct_posts d ON d.anomaly_type = f.anomaly_type
 ORDER BY i.intake_rows DESC
 ```
 
-**Output** (4 rows, executed in 63.39 ms):
+**Output** (4 rows, executed in 68.13 ms):
 
 | `anomaly_type` | `intake_rows` | `distinct_posts` | `replay_rows_removed` |
 |---|---|---|---|
@@ -1402,7 +1402,7 @@ GROUP BY f.post_id, f.n_anomalies
 ORDER BY f.post_id ASC
 ```
 
-**Output** (20 rows, executed in 2.71 ms):
+**Output** (20 rows, executed in 4.07 ms):
 
 | `post_id` | `n_anomalies` | `anomaly_types` |
 |---|---|---|
@@ -1469,7 +1469,7 @@ WHERE u.follower_count < 10000
 ORDER BY pu.total_engagement DESC, pu.user_id ASC
 ```
 
-**Output** (82 rows, executed in 17.39 ms):
+**Output** (82 rows, executed in 21.43 ms):
 
 | `location` | `follower_count` | `n_posts` | `avg_engagement_per_post` | `total_engagement` | `engagement_rank` | `user_id` |
 |---|---|---|---|---|---|---|
@@ -1535,7 +1535,7 @@ SELECT (SELECT COUNT(*) FROM users)                                   AS all_use
            AND pu.user_id IN (SELECT user_id FROM over_shared))       AS all_three_conditions
 ```
 
-**Output** (1 row, executed in 17.25 ms):
+**Output** (1 row, executed in 21.38 ms):
 
 | `all_users` | `c1_fewer_than_10k_followers` | `c2_above_overall_avg` | `c3_has_over_shared_post` | `all_three_conditions` |
 |---|---|---|---|---|

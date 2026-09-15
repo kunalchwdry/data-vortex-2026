@@ -10,7 +10,7 @@
       "platform",
       "n_posts"
     ],
-    "elapsed_ms": 0.887,
+    "elapsed_ms": 1.073,
     "rows": [
       [
         "YouTube",
@@ -36,7 +36,7 @@
       "df",
       "verdict_at_5pct"
     ],
-    "elapsed_ms": 3.946,
+    "elapsed_ms": 4.194,
     "rows": [
       [
         "YouTube",
@@ -107,7 +107,7 @@
       "comments",
       "total_engagement"
     ],
-    "elapsed_ms": 1.875,
+    "elapsed_ms": 2.472,
     "rows": [
       [
         "ycjj5zzt7mvx",
@@ -216,7 +216,7 @@
       "posts_within_1pct_of_cut",
       "best_over_tenth_pct"
     ],
-    "elapsed_ms": 5.327,
+    "elapsed_ms": 6.442,
     "rows": [
       [
         8689,
@@ -246,7 +246,7 @@
       "engagement_rank",
       "eligibility"
     ],
-    "elapsed_ms": 6.841,
+    "elapsed_ms": 9.801,
     "rows": [
       [
         "Instagram",
@@ -334,7 +334,7 @@
       "z_stat",
       "verdict"
     ],
-    "elapsed_ms": 6.735,
+    "elapsed_ms": 9.323,
     "rows": [
       [
         "Instagram",
@@ -363,7 +363,7 @@
       "shares",
       "comments"
     ],
-    "elapsed_ms": 1.406,
+    "elapsed_ms": 2.03,
     "rows": [
       [
         "euvr0r10wrj6",
@@ -1879,7 +1879,7 @@
       "flagged_posts",
       "pct_of_platform"
     ],
-    "elapsed_ms": 11.353,
+    "elapsed_ms": 17.58,
     "rows": [
       [
         "Instagram",
@@ -1933,7 +1933,7 @@
       "language",
       "follower_count"
     ],
-    "elapsed_ms": 0.468,
+    "elapsed_ms": 0.563,
     "rows": [
       [
         "user_3o7w66o2",
@@ -3709,7 +3709,7 @@
       "total_engagement",
       "engagement_rank"
     ],
-    "elapsed_ms": 10.212,
+    "elapsed_ms": 12.978,
     "rows": [
       [
         "Los Angeles, USA",
@@ -3928,7 +3928,7 @@
       "rank_by_avg_per_post",
       "rank_shift"
     ],
-    "elapsed_ms": 10.772,
+    "elapsed_ms": 14.046,
     "rows": [
       [
         "Los Angeles, USA",
@@ -4245,7 +4245,7 @@
       "total_engagement",
       "sd_engagement"
     ],
-    "elapsed_ms": 14.529,
+    "elapsed_ms": 17.518,
     "rows": [
       [
         "LOW (< 25k followers)",
@@ -4281,7 +4281,7 @@
       "z_stat",
       "verdict"
     ],
-    "elapsed_ms": 11.568,
+    "elapsed_ms": 14.926,
     "rows": [
       [
         3647.98,
@@ -4308,7 +4308,7 @@
       "n_posts",
       "total_engagement"
     ],
-    "elapsed_ms": 10.269,
+    "elapsed_ms": 12.632,
     "rows": [
       [
         "user_nfo3ih5u",
@@ -4397,7 +4397,7 @@
       "users_tied_at_the_cut",
       "distinct_post_counts"
     ],
-    "elapsed_ms": 1.934,
+    "elapsed_ms": 2.13,
     "rows": [
       [
         17,
@@ -4422,7 +4422,7 @@
       "avg_engagement_per_post",
       "rank_within_cohort"
     ],
-    "elapsed_ms": 9.725,
+    "elapsed_ms": 12.891,
     "rows": [
       [
         "Instagram",
@@ -4470,7 +4470,7 @@
       "n_posts",
       "avg_engagement_per_post"
     ],
-    "elapsed_ms": 18.028,
+    "elapsed_ms": 22.271,
     "rows": [
       [
         25000,
@@ -4522,7 +4522,7 @@
       "excess_shares",
       "share_to_reaction_ratio"
     ],
-    "elapsed_ms": 1.658,
+    "elapsed_ms": 2.434,
     "rows": [
       [
         "603lc32fqk41",
@@ -4742,7 +4742,7 @@
       "pct_of_loose_that_is_missing_data",
       "reconciliation"
     ],
-    "elapsed_ms": 4.096,
+    "elapsed_ms": 5.658,
     "rows": [
       [
         1047,
@@ -4769,7 +4769,7 @@
       "n_posts",
       "avg_engagement"
     ],
-    "elapsed_ms": 9.4,
+    "elapsed_ms": 12.663,
     "rows": [],
     "error": null
   },
@@ -4790,7 +4790,7 @@
       "qualifying_users",
       "verdict"
     ],
-    "elapsed_ms": 9.592,
+    "elapsed_ms": 12.903,
     "rows": [
       [
         3623.72,
@@ -4817,7 +4817,7 @@
       "threshold",
       "users_qualifying"
     ],
-    "elapsed_ms": 29.253,
+    "elapsed_ms": 38.6,
     "rows": [
       [
         "1.25x",
@@ -4857,7 +4857,7 @@
       "n_posts",
       "total_engagement"
     ],
-    "elapsed_ms": 13.874,
+    "elapsed_ms": 23.284,
     "rows": [
       [
         "Barcelona, Spain",
@@ -5668,7 +5668,7 @@
       "absolute_margin",
       "margin_pct"
     ],
-    "elapsed_ms": 13.534,
+    "elapsed_ms": 20.797,
     "rows": [
       [
         "Tokyo, Japan",
@@ -5747,7 +5747,7 @@
       "post_engagement",
       "multiple_of_platform_avg"
     ],
-    "elapsed_ms": 10.079,
+    "elapsed_ms": 13.674,
     "rows": [
       [
         "wo7py9aljg3t",
@@ -6384,7 +6384,7 @@
       "pct_of_platform",
       "eligibility"
     ],
-    "elapsed_ms": 13.117,
+    "elapsed_ms": 17.987,
     "rows": [
       [
         "Twitter",
@@ -6460,7 +6460,7 @@
       "engagement_decile",
       "top_decile_floor_engagement"
     ],
-    "elapsed_ms": 10.3,
+    "elapsed_ms": 12.853,
     "rows": [
       [
         "user_uerv85na",
@@ -6648,7 +6648,7 @@
       "via_explicit_percentile",
       "robustness"
     ],
-    "elapsed_ms": 12.975,
+    "elapsed_ms": 15.026,
     "rows": [
       [
         38765,
@@ -6671,7 +6671,7 @@
       "n_anomalies",
       "anomaly_types"
     ],
-    "elapsed_ms": 10.595,
+    "elapsed_ms": 10.697,
     "rows": [
       [
         "0oqpg2rgnqxa",
@@ -28779,7 +28779,7 @@
       "distinct_posts",
       "replay_rows_removed"
     ],
-    "elapsed_ms": 63.388,
+    "elapsed_ms": 68.126,
     "rows": [
       [
         "MISSING_PLATFORM",
@@ -28820,7 +28820,7 @@
       "n_anomalies",
       "anomaly_types"
     ],
-    "elapsed_ms": 2.705,
+    "elapsed_ms": 4.074,
     "rows": [
       [
         "0oqpg2rgnqxa",
@@ -28941,7 +28941,7 @@
       "engagement_rank",
       "user_id"
     ],
-    "elapsed_ms": 17.389,
+    "elapsed_ms": 21.429,
     "rows": [
       [
         "Johannesburg, South Africa",
@@ -29698,7 +29698,7 @@
       "c3_has_over_shared_post",
       "all_three_conditions"
     ],
-    "elapsed_ms": 17.251,
+    "elapsed_ms": 21.38,
     "rows": [
       [
         1500,

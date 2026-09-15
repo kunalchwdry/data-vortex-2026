@@ -438,3 +438,87 @@ def test_provenance_record_never_downgrades_a_successful_verification():
         "is stale and must be regenerated")
     # and the two artefacts that depend on it must agree with it
     assert len(data["local_sha256"]) == 2
+
+
+# ===========================================================================
+# Phase 2 form submission set
+#
+# The Google Form imposes hard constraints: PDF for the SQL and insight slots,
+# JPEG for the screenshots, AT MOST FIVE image files, 10 MB per file. A
+# regeneration that silently produces a sixth sheet, a PNG, or an 11 MB file
+# would be rejected by the form after the upload appears to succeed locally --
+# which is exactly the failure worth catching here rather than during submission.
+# ===========================================================================
+SUBMISSION = ROOT / "submission" / "phase2"
+FORM_MAX_SHOTS = 5
+FORM_MAX_MB = 10.0
+
+
+@pytest.fixture(scope="module")
+def submission_files() -> dict:
+    if not SUBMISSION.exists():
+        pytest.skip("run src/make_submission_phase2.py first")
+    return {p.name: p for p in sorted(SUBMISSION.iterdir()) if p.is_file()}
+
+
+def test_submission_set_fills_exactly_four_slots(submission_files):
+    pdfs = [n for n in submission_files if n.endswith(".pdf")]
+    shots = [n for n in submission_files if n.endswith(".jpeg")]
+    assert len(pdfs) == 3, f"expected 3 PDFs (SQL, logic, insight), got {pdfs}"
+    assert len(shots) == FORM_MAX_SHOTS, (
+        f"the form accepts {FORM_MAX_SHOTS} screenshots, got {len(shots)}")
+
+
+def test_no_png_leaks_into_the_upload_set(submission_files):
+    """The screenshot slot is image/*, but the brief asks for .jpeg by name."""
+    stray = [n for n in submission_files if n.endswith((".png", ".jpg", ".gif"))]
+    assert stray == [], f"non-JPEG images would be off-brief: {stray}"
+
+
+def test_every_file_is_within_the_form_size_cap(submission_files):
+    for name, path in submission_files.items():
+        mb = path.stat().st_size / 1e6
+        assert mb <= FORM_MAX_MB, f"{name} is {mb:.2f} MB, cap is {FORM_MAX_MB}"
+
+
+def test_files_are_actually_their_declared_format(submission_files):
+    """The form rejects a mislabelled file, so check magic bytes not extensions."""
+    for name, path in submission_files.items():
+        head = path.read_bytes()[:4]
+        if name.endswith(".pdf"):
+            assert head[:4] == b"%PDF", f"{name} is not a PDF"
+        elif name.endswith(".jpeg"):
+            assert head[:3] == b"\xff\xd8\xff", f"{name} is not a JPEG"
+
+
+def test_documents_label_every_question_number(submission_files):
+    """'mention the question number (eg E1, M3, H6)' is an explicit form
+    requirement, so it is asserted rather than assumed."""
+    need = [f"E{i}" for i in range(1, 6)] + [f"M{i}" for i in range(1, 6)] + \
+           [f"H{i}" for i in range(1, 7)]
+    the_pdfs = [p for n, p in submission_files.items() if n.endswith(".pdf")]
+    assert the_pdfs, "no PDFs to check"
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        pytest.skip("pypdf not installed")
+    for path in the_pdfs:
+        text = " ".join(page.extract_text() or "" for page in PdfReader(path).pages)
+        missing = [q for q in need if q not in text]
+        assert missing == [], f"{path.name} never labels {missing}"
+
+
+def test_manifest_matches_the_files_on_disk(submission_files):
+    manifest = SUBMISSION / "MANIFEST.md"
+    assert manifest.exists(), "the upload set must ship a manifest"
+    text = manifest.read_text()
+    for name in submission_files:
+        if name == manifest.name:
+            continue          # the manifest does not list itself
+        assert name in text, f"{name} is not listed in MANIFEST.md"
+    # the sha prefixes must describe the current bytes, not a previous run
+    for name, path in submission_files.items():
+        if not name.endswith((".pdf", ".jpeg")):
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+        assert digest in text, f"{name} hash in MANIFEST.md is stale"

@@ -55,8 +55,9 @@ fi
 say "8 · build + execute the notebook"
 $PY src/make_notebook.py
 
-say "9 · assemble the form upload set"
+say "9 · assemble the form upload sets"
 $PY src/make_submission.py
+$PY src/make_submission_phase2.py
 
 printf '\n\033[1;32mdone\033[0m\n'
 echo "  Phase 1 -> submission/  (upload set for the form)"
@@ -68,3 +69,5 @@ echo "  Phase 2 challenge set (E/M/H) ->"
 echo "            output/Phase2_ChallengeSet_Report.pdf"
 echo "            output/phase2_sql_outputs.md"
 echo "            output/screenshots/E1.png ... H6b.png"
+echo "  Phase 2 form upload set ->"
+echo "            submission/phase2/  (4 slots, 8 files, see MANIFEST.md)"
