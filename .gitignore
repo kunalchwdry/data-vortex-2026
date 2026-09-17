@@ -24,6 +24,8 @@ submission/*
 # to be able to download them from the repo. Regenerate with
 # src/make_submission_phase2.py (deterministic apart from query timings).
 !submission/phase2/
+# Same for the Round-2 upload set (regenerate with ./run_round2.sh).
+!submission/round2/
 
 # editor / notebook runtime droppings from anyone's machine
 .ipython/
