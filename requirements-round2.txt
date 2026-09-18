@@ -1,0 +1,20 @@
+# Data Vortex Round 2 (NLP semantic layer). Verified with pandas 3 + sklearn 1.9.
+pandas>=2.0
+numpy>=1.26
+matplotlib>=3.8
+scikit-learn>=1.3
+scipy>=1.11
+joblib>=1.3
+
+# PDF generation
+reportlab>=4.0
+Pillow>=10.0
+
+# notebook build/execution
+nbformat>=5.9
+nbclient>=0.10
+jupyter>=1.0
+ipykernel>=6.0
+
+# tests
+pytest>=8.0
