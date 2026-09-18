@@ -26,6 +26,9 @@ submission/*
 !submission/phase2/
 # Same for the Round-2 upload set (regenerate with ./run_round2.sh).
 !submission/round2/
+# One-file-per-slot copies for the official Google Form (max 10 MB each):
+# the 4 model .pkl files are bundled into a single zip for the model slot.
+!submission/round2_form_upload/
 
 # editor / notebook runtime droppings from anyone's machine
 .ipython/
