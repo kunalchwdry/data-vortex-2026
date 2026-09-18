@@ -1,0 +1,31 @@
+{
+  "n_raw": 9000,
+  "n_empty_heldout": 0,
+  "n_dupe_heldout": 1100,
+  "n_modeled": 7900,
+  "n_conflicting_texts": 0,
+  "sentiment_counts": {
+    "Negative": 2430,
+    "Neutral": 2748,
+    "Positive": 2722
+  },
+  "topic_counts": {
+    "Account_Security": 129,
+    "Community_Discussion": 6803,
+    "Feature_Feedback": 250,
+    "Technical_Issues": 718
+  },
+  "topics": [
+    "Account_Security",
+    "Community_Discussion",
+    "Feature_Feedback",
+    "Technical_Issues"
+  ],
+  "length_chars": {
+    "min": 24,
+    "p50": 112.0,
+    "mean": 106.5,
+    "max": 158
+  },
+  "reconciliation": "9000 raw - 0 empty - 1100 exact-duplicate = 7900 modeled"
+}

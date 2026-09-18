@@ -1,0 +1,30 @@
+{
+  "seed": 42,
+  "test_size": 0.2,
+  "stratify": "sentiment_x_topic",
+  "n_train": 6320,
+  "n_test": 1580,
+  "train_sentiment": {
+    "Neutral": 2199,
+    "Positive": 2177,
+    "Negative": 1944
+  },
+  "test_sentiment": {
+    "Neutral": 549,
+    "Positive": 545,
+    "Negative": 486
+  },
+  "train_topic": {
+    "Community_Discussion": 5443,
+    "Technical_Issues": 574,
+    "Feature_Feedback": 200,
+    "Account_Security": 103
+  },
+  "test_topic": {
+    "Community_Discussion": 1360,
+    "Technical_Issues": 144,
+    "Feature_Feedback": 50,
+    "Account_Security": 26
+  },
+  "id_overlap": 0
+}
