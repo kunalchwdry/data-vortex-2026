@@ -24,8 +24,10 @@ submission/*
 # to be able to download them from the repo. Regenerate with
 # src/make_submission_phase2.py (deterministic apart from query timings).
 !submission/phase2/
-# Same for the Round-2 upload set (regenerate with ./run_round2.sh).
-!submission/round2/
+# Round-2 deliverable copies are NOT tracked: canonical files live in
+# models/round2/, output/round2/ and notebooks/; the form upload set is
+# submission/round2_form_upload/. run_round2.sh still regenerates
+# submission/round2/ locally for convenience -- it just stays untracked.
 # One-file-per-slot copies for the official Google Form (max 10 MB each):
 # the 4 model .pkl files are bundled into a single zip for the model slot.
 !submission/round2_form_upload/
