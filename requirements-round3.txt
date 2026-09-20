@@ -1,0 +1,4 @@
+# Data Vortex Round 3 (live monitoring layer). Shares most deps with Round 2.
+requests>=2.31
+
+-r requirements-round2.txt
