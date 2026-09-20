@@ -1,0 +1,92 @@
+{
+ "generated_at_ist": "2026-09-20 22:49",
+ "n_records": 2370,
+ "by_source": {
+  "gnews": 1619,
+  "bing": 451,
+  "mastodon": 221,
+  "feed_ht_sports": 30,
+  "feed_thehindu_cricket": 22,
+  "gdelt": 18,
+  "feed_sportstar_cricket": 9
+ },
+ "by_arc": {
+  "live": 1244,
+  "retro": 1126
+ },
+ "by_kind": {
+  "news": 2088,
+  "social": 221,
+  "publisher": 61
+ },
+ "n_hindi": 559,
+ "date_span": [
+  "2026-09-13",
+  "2026-09-20"
+ ],
+ "model": "models/round2/sentiment_best.pkl (Round 2 shipped winner)",
+ "spikes": [
+  {
+   "hour_ist": "2026-09-20 09:00:00+05:30",
+   "count": 94,
+   "z": 3.74
+  },
+  {
+   "hour_ist": "2026-09-20 10:00:00+05:30",
+   "count": 145,
+   "z": 6.12
+  },
+  {
+   "hour_ist": "2026-09-20 11:00:00+05:30",
+   "count": 92,
+   "z": 3.65
+  },
+  {
+   "hour_ist": "2026-09-20 12:00:00+05:30",
+   "count": 97,
+   "z": 3.88
+  },
+  {
+   "hour_ist": "2026-09-20 13:00:00+05:30",
+   "count": 113,
+   "z": 4.63
+  },
+  {
+   "hour_ist": "2026-09-20 14:00:00+05:30",
+   "count": 77,
+   "z": 2.95
+  }
+ ],
+ "hourly_mean": 13.94,
+ "hourly_sd": 21.4,
+ "shift_tests": [
+  {
+   "contrast": "SF day: pre-match (00-10:30) vs post-result (13:30-23:59)",
+   "n_pre": 25,
+   "n_post": 36,
+   "mean_pre": 0.27,
+   "mean_post": 0.246,
+   "delta": -0.024,
+   "mannwhitney_p": 0.7359
+  }
+ ],
+ "entity_counts": {
+  "Asian Games (event)": 1658,
+  "Bangladesh (SF opp.)": 266,
+  "Hockey": 240,
+  "Shooting": 236,
+  "Trophy standoff": 225,
+  "Sri Lanka (final opp.)": 170,
+  "Shafali Verma": 167,
+  "Smriti Mandhana": 99,
+  "Harmanpreet Kaur": 81,
+  "Kabaddi": 72,
+  "BCCI": 69,
+  "Sindhu (badminton)": 44,
+  "Sree Charani": 43,
+  "Deepti Sharma": 18,
+  "Richa Ghosh": 4,
+  "Jemimah Rodrigues": 3,
+  "Renuka Singh": 0
+ }
+}
