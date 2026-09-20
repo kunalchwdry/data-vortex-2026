@@ -40,7 +40,7 @@ Round 2 handed us a dead semantic layer and 9,000 labelled texts.
 
 ## Contents
 
-**PART 1 — Round 1** · [jump](#part-1)
+**PART 1 — Round 1** · [start here](#the-result-in-30-seconds)
 
 1. [The result in 30 seconds](#the-result-in-30-seconds)
 2. [Reproduce it](#reproduce-it)
@@ -55,25 +55,23 @@ Round 2 handed us a dead semantic layer and 9,000 labelled texts.
 11. [Assumptions and limitations](#assumptions-and-limitations)
 12. [Rulebook compliance](#rulebook-compliance)
 
-**PART 2 — Round 2** · [jump](#part-2)
+**PART 2 — Round 2** · [start here](#round-2-in-30-seconds)
 
 1. [Round 2 in 30 seconds](#round-2-in-30-seconds)
-2. [Reproduce it — Round 2](#reproduce-it--round-2)
+2. [Reproduce it — Round 2](#reproduce-it---round-2)
 3. [The dataset and the intake decisions](#the-dataset-and-the-intake-decisions)
-4. [Preprocessing: conservative by design](#preprocessing-conservative-by-design)
-5. [Model selection: a bake-off, not a guess](#model-selection-a-bake-off-not-a-guess)
+4. [Preprocessing: conservative by design](#preprocessing---conservative-by-design)
+5. [Model selection: a bake-off, not a guess](#model-selection---a-bake-off-not-a-guess)
 6. [Training methodology](#training-methodology)
 7. [Results](#results)
-8. [Error analysis: reading the mistakes](#error-analysis-reading-the-mistakes)
-9. [The unsupervised cross-check that failed (and is published anyway)](#the-unsupervised-cross-check-that-failed-and-is-published-anyway)
-10. [What we tested and rejected — Round 2](#what-we-tested-and-rejected--round-2)
-11. [Repo structure (the Round 2 slice)](#repo-structure-the-round-2-slice)
-12. [Assumptions and limitations — Round 2](#assumptions-and-limitations--round-2)
-13. [Rulebook compliance — Round 2](#rulebook-compliance--round-2)
+8. [Error analysis: reading the mistakes](#error-analysis---reading-the-mistakes)
+9. [The unsupervised cross-check that failed (and is published anyway)](#the-unsupervised-cross-check-that-failed---and-is-published-anyway)
+10. [What we tested and rejected — Round 2](#what-we-tested-and-rejected---round-2)
+11. [Repo structure (the Round 2 slice)](#repo-structure---the-round-2-slice)
+12. [Assumptions and limitations — Round 2](#assumptions-and-limitations---round-2)
+13. [Rulebook compliance — Round 2](#rulebook-compliance---round-2)
 
 ---
-
-<a id="part-1"></a>
 
 # PART 1 — Round 1 · Data Intake Restoration & Analytical Core
 
@@ -532,8 +530,6 @@ Stated up front because "clearly explain assumptions" is a scored criterion:
 
 ---
 
-<a id="part-2"></a>
-
 # PART 2 — Round 2 · The Semantic Layer (NLP)
 
 | | |
@@ -571,15 +567,15 @@ evaluation, confusion matrix, error analysis.
   topic: **acc 0.9677 · macro-F1 0.8051 · MCC 0.864**.
 - Read the errors instead of averaging them: the topic "gap" is pure
   sample-size arithmetic (two rare classes at n=26 and n=50), and sentiment's
-  confusion is a Neg↔Neu story — see [Error analysis](#error-analysis-reading-the-mistakes).
+  confusion is a Neg↔Neu story — see [Error analysis](#error-analysis---reading-the-mistakes).
 - Ran the unsupervised cross-check the task invites, watched it **fail**
   (NMI ≈ 0.002), and published the failure — see
-  [the honest section](#the-unsupervised-cross-check-that-failed-and-is-published-anyway).
+  [the honest section](#the-unsupervised-cross-check-that-failed---and-is-published-anyway).
 - Shipped all four rulebook deliverables, checksummed for the form.
 
 ---
 
-## Reproduce it — Round 2
+## Reproduce it - Round 2
 
 ```bash
 git clone <this-repo> && cd <this-repo>
@@ -649,7 +645,7 @@ pipeline keeps conflicts everywhere and reports them. The data contained none.
 That is a **53 : 1** imbalance, which is why **macro-F1 is the headline
 metric** everywhere in Round 2: a majority-class classifier scores 0.86
 accuracy on topic while learning nothing (macro-F1 0.24 — see
-[What we tested and rejected](#what-we-tested-and-rejected--round-2)).
+[What we tested and rejected](#what-we-tested-and-rejected---round-2)).
 
 Text lengths run 24–158 chars (mean 106.5) — genuinely short text, which
 shapes every feature decision below.
@@ -661,7 +657,7 @@ shapes every feature decision below.
 
 ---
 
-## Preprocessing: conservative by design
+## Preprocessing - conservative by design
 
 `src/round2/text_clean.py` does the minimum that helps and nothing that
 destroys signal: HTML unescaping, URL/email masking, lowercasing, elongation
@@ -682,7 +678,7 @@ unsupervised get unigrams only (D9 — bigrams made topics measurably noisier).
 
 ---
 
-## Model selection: a bake-off, not a guess
+## Model selection - a bake-off not a guess
 
 Six specifications per task, scored by **5-fold stratified CV on the train
 split only** (`f1_macro`, D6). Grids are small and declared up front (D7) —
@@ -778,7 +774,7 @@ reports whether calibration helped or hurt log-loss rather than assuming.
 
 ---
 
-## Error analysis: reading the mistakes
+## Error analysis - reading the mistakes
 
 **The topic "gap" is sample-size arithmetic, not model failure.** The two rare
 classes have *perfect precision* and recall 0.44 / 0.50 — the model finds them
@@ -811,7 +807,7 @@ the classic short-text sentiment ceiling, and it sets up Round 3 honestly.
 
 ---
 
-## The unsupervised cross-check that failed (and is published anyway)
+## The unsupervised cross-check that failed - and is published anyway
 
 The dataset invites topic modelling, so LDA and NMF were fitted with K=4 (one
 topic per labelled class) as an unsupervised sanity check against the human
@@ -844,7 +840,7 @@ co-occurrence cannot find. Two consequences, both kept:
 
 ---
 
-## What we tested and rejected — Round 2
+## What we tested and rejected - Round 2
 
 Round 1 killed five findings with statistics; Round 2 killed five modelling
 shortcuts the same way. All five were tempting, all five failed:
@@ -864,7 +860,7 @@ classes with ≤ 50 examples) — stated as a limitation, not spun as a win.
 
 ---
 
-## Repo structure (the Round 2 slice)
+## Repo structure - the Round 2 slice
 
 ```
 data/round2/raw/    Dataset2.csv -- 9,000 labelled texts, byte-identical to the
@@ -893,7 +889,7 @@ submitted is provably what this repo ships. Everything regenerates from
 
 ---
 
-## Assumptions and limitations — Round 2
+## Assumptions and limitations - Round 2
 
 Stated up front because "clearly explain assumptions" is a scored criterion:
 
@@ -919,7 +915,7 @@ Stated up front because "clearly explain assumptions" is a scored criterion:
 
 ---
 
-## Rulebook compliance — Round 2
+## Rulebook compliance - Round 2
 
 | Rule | How this repo satisfies it |
 |---|---|
