@@ -36,3 +36,7 @@ submission/*
 .ipython/
 .jupyter/
 *.sqlite
+
+# Round 3: parked dry-run artifacts + scratch score frame (regenerated)
+output/round3/smoke/
+output/round3/quick_score.json
