@@ -8,6 +8,7 @@
 
 **PART 1 · Round 1 · 13–16 September** — `12,360 raw rows → 10,221 analysis rows` · `27 justified repairs` · `45 SQL queries`
 **PART 2 · Round 2 · 17–18 September** — `9,000 labelled texts → 7,900 modelled` · `sentiment macro-F1 0.613` · `topic macro-F1 0.805` · `14 tests passing`
+**PART 3 · Round 3 · 20–22 September** — `10,396 live-collected records` · `21 sweeps · 9 sources` · `gold-day shift p=0.0043` · `X+YT manual datasets merged`
 
 </div>
 
@@ -20,15 +21,15 @@ nothing is hardcoded, every claim must survive its own refutation.** Round 1
 handed us a dataset hidden behind a broken website and a dead analytics core;
 Round 2 handed us a dead semantic layer and 9,000 labelled texts.
 
-| | **Part 1 · Round 1** | **Part 2 · Round 2** |
-|---|---|---|
-| what collapsed | the data intake + the analytical core | the semantic comprehension layer |
-| the data | 12,360 corrupted posts + 1,500 users, recovered from a puzzle site | Dataset 2 — 9,000 labelled texts, MD5-verified against the official drop |
-| what we built | cleaning pipeline (27 logged repairs) · schema'd SQLite core · 45 SQL answers | TF-IDF + linear sentiment & topic classifiers · LDA/NMF cross-check · 2 report PDFs |
-| headline result | `12,360 − 360 − 1,779 = 10,221` closes exactly; the "midnight peak" trap refuted | sentiment macro-F1 **0.6134** · topic macro-F1 **0.8051**; errors read, not averaged |
-| the doctrine | hold-outs reconcile · NULLs stay NULL · findings must survive refutation | one split, one seed, one test touch · margins reported, not celebrated |
-| reproduce | `./run_all.sh` → `21 passed` | `./run_round2.sh` → `14 passed` |
-| submission set | [`submission/phase2/`](submission/phase2/MANIFEST.md) | [`submission/round2_form_upload/`](submission/round2_form_upload/SUBMISSION_DETAILS.md) |
+| | **Part 1 · Round 1** | **Part 2 · Round 2** | **Part 3 · Round 3** |
+|---|---|---|---|
+| what collapsed | the data intake + the analytical core | the semantic comprehension layer | live-event monitoring |
+| the data | 12,360 corrupted posts + 1,500 users, recovered from a puzzle site | Dataset 2 — 9,000 labelled texts, MD5-verified against the official drop | **10,396 self-collected records** — 21 sweeps + team-manual X/YouTube datasets |
+| what we built | cleaning pipeline (27 logged repairs) · schema'd SQLite core · 45 SQL answers | TF-IDF + linear sentiment & topic classifiers · LDA/NMF cross-check · 2 report PDFs | sweep collector (9 keyless sources) · Round-2 model applied live · shift/spike detection · 2 report PDFs |
+| headline result | `12,360 − 360 − 1,779 = 10,221` closes exactly; the "midnight peak" trap refuted | sentiment macro-F1 **0.6134** · topic macro-F1 **0.8051**; errors read, not averaged | gold-day positivity shift **p = 0.0043**; 9 spikes (SF cluster z ≤ 3.85); reaction captured through PM Modi's tweet |
+| the doctrine | hold-outs reconcile · NULLs stay NULL · findings must survive refutation | one split, one seed, one test touch · margins reported, not celebrated | created_at ≠ collected_at · every HTTP outcome logged · no login-wall bypass — manual collection documented instead |
+| reproduce | `./run_all.sh` → `21 passed` | `./run_round2.sh` → `14 passed` | `./run_round3.sh` → report + executed notebook |
+| submission set | [`submission/phase2/`](submission/phase2/MANIFEST.md) | [`submission/round2_form_upload/`](submission/round2_form_upload/SUBMISSION_DETAILS.md) | this repo: `data/round3/` + `notebooks/03_*` + `output/round3/` |
 
 > **Every number in this README is generated.** Part 1's tables and figures are
 > produced by `./run_all.sh` from the two recovered CSVs; Part 2's by
@@ -56,6 +57,35 @@ Round 2 handed us a dead semantic layer and 9,000 labelled texts.
 12. [Rulebook compliance](#rulebook-compliance)
 
 **PART 2 — Round 2** · [start here](#round-2-in-30-seconds)
+
+1. [Round 2 in 30 seconds](#round-2-in-30-seconds)
+2. [Reproduce it - Round 2](#reproduce-it---round-2)
+3. [The dataset and the intake decisions](#the-dataset-and-the-intake-decisions)
+4. [Preprocessing - conservative by design](#preprocessing---conservative-by-design)
+5. [Model selection - a bake-off not a guess](#model-selection---a-bake-off-not-a-guess)
+6. [Training methodology](#training-methodology)
+7. [Results](#results)
+8. [Error analysis - reading the mistakes](#error-analysis---reading-the-mistakes)
+9. [The unsupervised cross-check that failed - and is published anyway](#the-unsupervised-cross-check-that-failed---and-is-published-anyway)
+10. [What we tested and rejected - Round 2](#what-we-tested-and-rejected---round-2)
+11. [Repo structure - the Round 2 slice](#repo-structure---the-round-2-slice)
+12. [Assumptions and limitations - Round 2](#assumptions-and-limitations---round-2)
+13. [Rulebook compliance - Round 2](#rulebook-compliance---round-2)
+
+**PART 3 — Round 3** · [start here](#round-3-in-30-seconds)
+
+1. [Round 3 in 30 seconds](#round-3-in-30-seconds)
+2. [Reproduce it - Round 3](#reproduce-it---round-3)
+3. [The assignment and the trigger design](#the-assignment-and-the-trigger-design)
+4. [Collection method and platform honesty](#collection-method-and-platform-honesty)
+5. [The corpus](#the-corpus)
+6. [NLP application - the Round 2 model goes live](#nlp-application---the-round-2-model-goes-live)
+7. [Results - spikes and the significant gold-day shift](#results---spikes-and-the-significant-gold-day-shift)
+8. [Entities and the multi-sport halo](#entities-and-the-multi-sport-halo)
+9. [The global comparison slice](#the-global-comparison-slice)
+10. [Trigger explanations and the decade arc](#trigger-explanations-and-the-decade-arc)
+11. [Assumptions and limitations - Round 3](#assumptions-and-limitations---round-3)
+12. [Rulebook compliance - Round 3](#rulebook-compliance---round-3)
 
 1. [Round 2 in 30 seconds](#round-2-in-30-seconds)
 2. [Reproduce it — Round 2](#reproduce-it---round-2)
@@ -934,6 +964,253 @@ Stated up front because "clearly explain assumptions" is a scored criterion:
 | Repo maintained | this repo; `./run_round2.sh` reproduces the round end-to-end |
 
 ---
+---
+
+# PART 3 — ROUND 3: LIVE MONITORING LAYER (NLP IN THE WILD)
+
+*Rulebook: "the Social Engine remains incapable of monitoring live events.
+Participants must independently collect real-time data... and apply their NLP
+model developed in Round 2 to analyse evolving conversations and detect
+behavioural shifts." Assigned topic: **Public Reaction to a Major
+Sports/Event Result**. Deadline: 22 September 2026, 11:59 PM.*
+
+## Round 3 in 30 seconds
+
+The task: collect raw social/news data **ourselves**, in real time, around the
+assigned topic — then push the Round-2 model out of the lab and into a living
+conversation, detecting behavioural shifts as they happen.
+
+**What we did**
+
+- Chose the sharpest in-window instance of the assigned topic: **India
+  Women's Cricket at the Aichi-Nagoya Asian Games 2026** — semi-final (20
+  Sept) and **gold-medal match v Sri Lanka (22 Sept)**, the exact fixture of
+  the 13 Sept Asia Cup final, under the still-open trophy standoff.
+- Built a **sweep-model collector** (9 keyless, ToS-respecting sources; one
+  sweep = fetch-everything, normalise, dedup, log) and ran it **21 times**
+  across the 10-day results arc (13–22 Sept): `12→2,370→5,544→10,396`.
+- Went where the APIs would not: **team-manual collection** brought in X
+  reactions (snowflake-verified 100%), YouTube comments for **40+ global
+  majors** (FIFA WC final, six F1 GPs, three tennis slams, NBA Finals,
+  Stanley Cup, WNBA, EPL), and the gold-match source registry — **including
+  PM Modi's congratulation tweet**, id-decoded and timestamp-verified.
+- Applied the **shipped Round-2 winner** (`sentiment_best.pkl`, no
+  retraining — the rulebook's mandate) to **10,396 records** across five
+  languages (EN/HI/JA/KO/ZH).
+- Detected **9 engagement spikes** (z ≥ 2.5; SF-result cluster peaks z=3.85)
+  and the headline behavioural result: a **significant positivity down-shift
+  on gold day** (P(Positive) 0.391 → 0.306, Mann-Whitney **p = 0.0043**) —
+  the expectation-weight + pride/shame signature predicted by the
+  trophy-standoff precedent.
+- Shipped all four rulebook deliverables: the live dataset CSV, the
+  collection code, an executed real-time notebook (23 cells, 0 errors), and
+  the analytical report — every number generated by the pipeline.
+
+---
+
+## Reproduce it - Round 3
+
+```bash
+pip install -r requirements-round3.txt
+./run_round3.sh            # sweep → analyze → report → notebook
+```
+
+| Command | Produces |
+|---|---|
+| `python src/round3/collect.py` | one sweep: posts.jsonl + deliverable CSV + sweep_log |
+| `python src/round3/analyze.py` | Round-2 model scores, figures, shift/spike tests |
+| `python src/round3/build_report.py` | `output/round3/Round3_Analytical_Report.pdf` |
+| `python src/round3/make_notebook.py` | builds **and executes** `notebooks/03_live_monitoring_real_time_analysis.ipynb` |
+
+Deterministic given the same corpus: one config file
+(`src/round3/config.py`, decisions D1–D3f) drives every sweep, filter and
+test. The live sweep stage is inherently time-dependent — it appends only
+inside the declared window and is a no-op after it.
+
+---
+
+## The assignment and the trigger design
+
+The organisers assign the topic per team; the in-window instance we monitored
+was designed like an experiment, not a keyword grab:
+
+| when (IST) | event | role in the study |
+|---|---|---|
+| 13–19 Sept | Asia Cup title (13th) + trophy standoff; 18th QF win | **retro arc** — the baseline narrative |
+| **20 Sept 10:30** | **SF: India v Bangladesh** | **shift candidate #1** → won by 114 (Shafali's maiden T20I 100) |
+| 21 Sept | kabaddi openers, men's air rifle, IND-PAK TT | baseline + halo day |
+| **22 Sept 10:30** | **GOLD-MEDAL match: India v Sri Lanka** | **shift candidate #2 + spike** — the Asia Cup final rematch, **won by 147** |
+
+Plus two live bonus triggers the calendar absorbed mid-window: the men's
+one-off T20I in Japan with the final-over wide-reversal storm ("Japan robbed"
+trended), and India's multi-sport medal flow (hockey 13–1, shooting silvers,
+first-ever MMA medal, badminton, wushu…).
+
+---
+
+## Collection method and platform honesty
+
+**Automated, keyless, ToS-respecting (21 sweeps, every HTTP outcome logged):**
+Google News RSS (EN + हिन्दी), Mastodon hashtag timelines, Hacker News
+(Algolia), Bing News RSS, three publisher feeds, GDELT (best-effort), X's
+public syndication embeds (best-effort).
+
+**Manual, team-collected (documented route):** X posts and YouTube comments
+gathered in-browser and imported through an **authenticity gate** — every X
+snowflake id is decoded (`id>>22` + Twitter epoch) and must match its stated
+timestamp within 5 minutes (100% of kept rows pass; 6 placeholder rows
+dropped); YouTube part-2 ships real per-comment timestamps (1000/1000).
+
+**Excluded, with dated probes (no bypass attempted):** X API free tier (no
+read access), X search and Instagram (login-walls), Reddit JSON (IP-blocked;
+RSS flaky). Full log: `docs/round3_event_plan.md`. IG contributes a source
+registry only.
+
+Every record carries `created_at_utc` (platform) **and** `collected_at_utc`
+(sweep); activity uses created_at exclusively, so bursty sweep cadence cannot
+distort the time series.
+
+---
+
+## The corpus
+
+| slice | records | composition |
+|---|---:|---|
+| India (spine) | 6,247 | news EN/HI · Mastodon · X manual · gold-match videos |
+| Global (comparison) | 4,149 | EN + 日本語 · 한국어 · 繁體中文 editions; X NFL set; YouTube 40+ majors |
+| **total** | **10,396** | dedup-audited (200 cross-query dupes removed); arc- and scope-tagged |
+
+The retro arc (13–19 Sept, 1,000+ records) is declared: same code, same
+schema, clearly split from the live window by the `arc` column.
+
+---
+
+## NLP application - the Round 2 model goes live
+
+`sentiment_best.pkl` scored every text-bearing record (10,396; social slice
+2,340). Designed readout: the **social slice carries sentiment** (the model's
+home domain); the **news slice is the domain-shift readout** — formal wire
+copy scores heavily Neutral under a social-trained model. That
+register-sensitivity gap is itself a Round-3 finding, reported rather than
+hidden. YouTube comments (short, informal) joined the social slice and
+sharpened it.
+
+---
+
+## Results - spikes and the significant gold-day shift
+
+**Spikes (hourly volume, z ≥ 2.5):** nine detected. The SF-day cluster peaks
+at **z = 3.85 (10:00 IST)** through the match window and stays elevated into
+the 13:00 result hour; gold-day builds again at 05:00/12:00 IST.
+
+**The headline behavioural result — shift #2 (gold day):**
+
+```
+social slice, mean P(Positive), Round-2 model:
+  pre-match  (00:00–10:30)  0.391  (n=188)
+  post-result (13:30–20:30) 0.306  (n=97)
+  delta = −0.084 · Mann-Whitney U p = 0.0043  → significant
+```
+
+A positivity **fall** after a 147-run gold-medal win is the study's most
+interesting reading, and it decomposes exactly as the trigger calendar
+predicted: India batted first (no chase-climax euphoria), reaction carried
+expectation-weight ("gold tha hi milna tha"), and the negative minority spoke
+louder — the Japan-match umpire storm and the unresolved trophy standoff.
+Pride and grievance, bimodal — the Sept-2025 signature, reproduced.
+
+Shift #1 (SF day) came out flat — a 114-run win against an expected opponent
+reads as confirmation, not news. The contrast between the two days *is* the
+finding: **the conversation responds to stakes and story, not to margin.**
+
+<p align="center">
+  <img src="output/round3/figures/r3_01_volume.png" width="820" alt="hourly volume with trigger lines"/>
+</p>
+
+---
+
+## Entities and the multi-sport halo
+
+17 entity trackers (EN + Hindi patterns) across the corpus: Asian Games
+(5,700+), Sri Lanka (final opp.), Bangladesh (SF), trophy-standoff thread,
+hockey, shooting, Shafali Verma, Mandhana, Harmanpreet, BCCI, kabaddi,
+Sindhu… The halo is the design: one Games, every Indian result monitored —
+including the day-3 rowers' "strike" story and Teqball's twin bronzes.
+
+---
+
+## The global comparison slice
+
+A bounded `scope=global` sample (4,149 records; 34% of corpus) — English +
+native Japanese/Korean/Chinese Google-News editions, the X NFL comparison set
+(Rams–Giants, Aaron Donald's return, same weekend), and YouTube reactions to
+40+ majors: the FIFA World Cup final (Spain–Argentina), six 2026 Grands Prix,
+US Open/Wimbledon/Roland-Garros finals, NBA Finals, Stanley Cup Game 6,
+Women's T20 World Cup, WNBA, Premier League and PBC boxing. India is
+downsampled to this slice's n in comparative tests — fair statistics over
+parity-by-padding (D3f).
+
+---
+
+## Trigger explanations and the decade arc
+
+Every detected movement is anchored to a scheduled event or a documented
+storyline; nothing is explained post-hoc:
+
+- **The rematch:** the gold-medal fixture repeated the 13 Sept Asia Cup final
+  (opponent, city-swap, and an open trophy feud) — the design's central trigger.
+- **The decade arc:** 2017 Lord's → 2020 MCG → 2022 Birmingham → 2023
+  Hangzhou gold → **Nov 2025 World Cup title** → this defence. Nine years,
+  four lost finals, then three trophies in eleven months (sources:
+  `docs/round3_past_events.md`, H1–H10, W1–W7).
+- **PM Modi's congratulation tweet and BCCI's "back-to-back gold medallists"**
+  post sit inside the corpus itself — snowflake-verified — so the reaction
+  timeline runs from the toss to the Prime Minister.
+
+---
+
+## Assumptions and limitations - Round 3
+
+- X and Instagram are partially covered: automated access is impossible
+  (probes dated); manual collection covered X well, Instagram only at source
+  level. The reaction graph is therefore news-heavy by construction.
+- The Round-2 model is social-trained; news-slice sentiment is a
+  domain-shift readout, not a headline number.
+- Sweep cadence is bursty; created_at keeps activity analysis exact.
+- YouTube part-1 comments lack per-comment timestamps (event-date anchored
+  only); part-2 has them 1000/1000.
+- GDELT and X-syndication rate limits are logged, never silently retried.
+- The retro arc is a declared extension, not a live measurement.
+
+---
+
+## Rulebook compliance - Round 3
+
+| Rule | How this repo satisfies it |
+|---|---|
+| R3: Self-collected live dataset | `data/round3/round3_live_dataset.csv` — 10,396 rows, arc/scope-tagged, sweep-logged |
+| R3: Scraping/extraction code | `src/round3/collect.py` + `x_syndication.py` (+ manual import protocol) |
+| R3: Real-time analysis notebook | `notebooks/03_live_monitoring_real_time_analysis.ipynb` — executed, 0 errors |
+| R3: Analytical report | `output/round3/Round3_Analytical_Report.pdf` — all mandated sections |
+| Data collection method & structure | sweep model + authenticity gates + exclusion log |
+| NLP application | Round-2 winner applied to every record — no retraining |
+| Topic relevance | one assigned topic, one event complex, declared slices |
+| Visualisation & time-based analysis | created_at curves, 9 spikes, pre/post shift tests |
+| Interpretation & real-world understanding | expectation-weight shift reading; decade arc; PM-level timeline |
+| Original work; repo maintained | this repo; `./run_round3.sh` regenerates the round |
+
+---
+
+<div align="center">
+
+*"The data survived. It understood. Now it watches back."*
+
+— ARCHIVE NODE 07, live monitoring restored
+
+</div>
+
+---
+
 
 <div align="center">
 
