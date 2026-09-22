@@ -222,6 +222,8 @@ set_topic(
         "India athletics Asian Games", "India boxing Asian Games",
         "India table tennis Asian Games", "India wushu Asian Games",
         "Aichi Nagoya India Asian Games",
+        "India Japan T20I wide controversy",
+        "Shreyas Iyer Axar umpire Japan",
         "Jemimah Rodrigues India", "Richa Ghosh India",
         "Sree Charani India", "India women Sri Lanka final",
         "Asian Games India day", "India teqball Asian Games",

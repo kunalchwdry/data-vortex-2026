@@ -285,7 +285,11 @@ def sweep(smoke: bool) -> None:
     ]
     for source, terms, fn in plans:
         for term in terms[: (1 if smoke else 10 ** 6)]:
-            for rec in fn(term):
+            try:
+                got = fn(term)
+            except Exception as e:   # per-source isolation: ek source kabhi
+                got = failed(source, term, f"err:{type(e).__name__}")  # sweep nahi girayega
+            for rec in got:
                 if rec["record_id"] in seen.get(source, set()):
                     continue
                 if C.STRICT_WINDOW_FILTER and not smoke:
@@ -379,6 +383,13 @@ def sweep(smoke: bool) -> None:
 
 def export_csv(jsonl: Path, smoke: bool) -> None:
     rows = [json.loads(l) for l in jsonl.read_text(encoding="utf-8").splitlines() if l]
+    seen_ids, uniq = set(), []
+    for r in rows:                      # belt-and-braces: corpus-level dedup
+        if r["record_id"] in seen_ids:
+            continue
+        seen_ids.add(r["record_id"])
+        uniq.append(r)
+    rows = uniq
     fields = ["record_id", "source", "author", "title", "text", "url", "lang",
               "created_at_utc", "collected_at_utc", "arc", "scope",
               "engagement_reblogs", "engagement_favourites", "engagement_replies",
