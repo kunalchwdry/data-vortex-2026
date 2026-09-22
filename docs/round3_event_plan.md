@@ -180,3 +180,33 @@ beat Pakistan; the 22 Sept gold-medal match is therefore **India vs Sri
 Lanka — the exact fixture of the 13 Sept Asia Cup final** (which India won,
 then refused Naqvi's trophy). The decade arc now converges on a repeat
 fixture: the report's central trigger narrative writes itself.
+
+## UPDATE (22 Sept): X IS IN — via manual logged-in collection (team member)
+
+The exclusion-log entry for X changes today: a team member manually collected
+public X posts during the window (browser, logged-in session) and delivered
+two CSVs — India Asian Games reactions (82 rows) and a comparison-set from a
+same-window NFL major (Rams v Giants, Aaron Donald's return, 57 rows). Import
+protocol (documented, rerunnable):
+
+- **authenticity gate:** every X snowflake id was decoded (id>>22 + Twitter
+  epoch) and required to match the stated timestamp within 5 minutes —
+  100% of kept rows pass; the timestamp column is UTC.
+- **6 placeholder rows (ag_* ids) dropped** — unverifiable provenance; their
+  facts are already covered by verified Google-News records.
+- merged as `source=x_manual`, engagement (likes/reposts/replies/views)
+  carried; India slice -> scope=india, NFL set -> scope=global.
+- corpus integrity re-audited: 200 cross-query gnews duplicates found by the
+  same audit and removed; an export-level dedup guard is now permanent.
+
+The X-search/syndication exclusion stands for AUTOMATED access; manual
+logged-in collection by the team is a different, documented route.
+
+## BONUS TRIGGER (22 Sept): IND v JAPAN one-off T20I — "Wide-gate"
+
+Same evening as the women's gold: India MEN played a historic first-ever
+one-off T20I v Japan (Sano) and won by 2 runs amid an umpiring storm —
+a wide call in the final over was reversed after Iyer/Axar confronted the
+umpires; "Japan robbed" trended on X. Added as in-window trigger #3
+(pride/shame bimodal — same shape as the trophy standoff). Queries added;
+the evening sweeps capture the reaction wave.
