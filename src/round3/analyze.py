@@ -73,6 +73,7 @@ def main() -> int:
     rows = [json.loads(l) for l in
             (C.LIVE_DIR / "posts.jsonl").read_text(encoding="utf-8").splitlines() if l]
     df = pd.DataFrame(rows)
+    df = df.drop_duplicates(subset="record_id", keep="first").reset_index(drop=True)
     df["text_full"] = (df.get("title", pd.Series(dtype=str)).fillna("") + ". " +
                        df.get("text", pd.Series(dtype=str)).fillna("")).str.strip(". ")
     df["dt_ist"] = ist_series(df["created_at_utc"])

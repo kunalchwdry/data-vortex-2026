@@ -81,9 +81,11 @@ df["text_full"] = (df["title"].fillna("") + ". " + df["text"].fillna("")).str.st
 df["dt_ist"] = pd.to_datetime(df["created_at_utc"], format="%Y-%m-%dT%H:%M:%SZ",
                               utc=True, errors="coerce").dt.tz_convert("Asia/Kolkata")
 df["hour_ist"] = df["dt_ist"].dt.floor("h")
-df["kind"] = np.where(df["source"].isin(["mastodon","xsynd"]), "social",
+df["kind"] = np.where(df["source"].isin(["mastodon","xsynd","y_manual"]), "social",
              np.where(df["source"].isin(["gnews","gnews_hi","bing","gdelt"]), "news",
-                      "publisher"))
+             np.where(df["source"].isin(["feed_thehindu_cricket","feed_sportstar_cricket",
+                                         "feed_ht_sports","feed_espncricinfo"]),
+                      "publisher", "other")))
 
 bundles = load_bundles()
 m = df["text_full"].str.len() > 0

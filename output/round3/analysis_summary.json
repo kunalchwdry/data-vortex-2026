@@ -1,8 +1,8 @@
 {
- "generated_at_ist": "2026-09-22 20:52",
- "n_records": 10396,
+ "generated_at_ist": "2026-09-22 21:25",
+ "n_records": 10384,
  "by_source": {
-  "gnews": 5136,
+  "gnews": 5124,
   "bing": 2518,
   "y_manual": 2000,
   "mastodon": 340,
@@ -14,18 +14,18 @@
   "feed_sportstar_cricket": 19
  },
  "by_arc": {
-  "live": 6974,
+  "live": 6962,
   "retro": 3422
  },
  "by_kind": {
-  "news": 7742,
+  "news": 7730,
   "social": 2340,
   "other": 212,
   "publisher": 102
  },
  "by_scope": {
-  "india": 6247,
-  "global": 4149
+  "india": 6242,
+  "global": 4142
  },
  "yt_events": {
   "2026 Green Mountain Championship": 69,
@@ -61,7 +61,7 @@
   {
    "hour_ist": "2026-09-20 10:00:00+05:30",
    "count": 215,
-   "z": 3.59
+   "z": 3.6
   },
   {
    "hour_ist": "2026-09-20 11:00:00+05:30",
@@ -81,7 +81,7 @@
   {
    "hour_ist": "2026-09-21 10:00:00+05:30",
    "count": 166,
-   "z": 2.59
+   "z": 2.6
   },
   {
    "hour_ist": "2026-09-22 05:00:00+05:30",
@@ -94,8 +94,8 @@
    "z": 2.84
   }
  ],
- "hourly_mean": 39.0,
- "hourly_sd": 48.98,
+ "hourly_mean": 38.95,
+ "hourly_sd": 48.91,
  "shift_tests": [
   {
    "contrast": "SHIFT #1 - SF day: pre-match (00-10:30) vs post-result (13:30-23:59)",
@@ -126,20 +126,20 @@
   }
  ],
  "entity_counts": {
-  "Asian Games (event)": 5810,
-  "Sri Lanka (final opp.)": 896,
+  "Asian Games (event)": 5798,
+  "Sri Lanka (final opp.)": 893,
   "Shooting": 813,
   "Hockey": 619,
   "Bangladesh (SF opp.)": 606,
   "Shafali Verma": 465,
   "Trophy standoff": 428,
   "Kabaddi": 360,
-  "Smriti Mandhana": 347,
+  "Smriti Mandhana": 341,
   "Harmanpreet Kaur": 315,
   "Sindhu (badminton)": 196,
   "BCCI": 126,
   "Sree Charani": 58,
-  "Deepti Sharma": 38,
+  "Deepti Sharma": 35,
   "Richa Ghosh": 21,
   "Jemimah Rodrigues": 3,
   "Renuka Singh": 0

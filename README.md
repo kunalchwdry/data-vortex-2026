@@ -8,7 +8,7 @@
 
 **PART 1 · Round 1 · 13–16 September** — `12,360 raw rows → 10,221 analysis rows` · `27 justified repairs` · `45 SQL queries`
 **PART 2 · Round 2 · 17–18 September** — `9,000 labelled texts → 7,900 modelled` · `sentiment macro-F1 0.613` · `topic macro-F1 0.805` · `14 tests passing`
-**PART 3 · Round 3 · 20–22 September** — `10,396 live-collected records` · `21 sweeps · 9 sources` · `gold-day shift p=0.0043` · `X+YT manual datasets merged`
+**PART 3 · Round 3 · 20–22 September** — `10,384 live-collected records` · `21 sweeps · 9 sources` · `gold-day shift p=0.0043` · `X+YT manual datasets merged`
 
 </div>
 
@@ -24,7 +24,7 @@ Round 2 handed us a dead semantic layer and 9,000 labelled texts.
 | | **Part 1 · Round 1** | **Part 2 · Round 2** | **Part 3 · Round 3** |
 |---|---|---|---|
 | what collapsed | the data intake + the analytical core | the semantic comprehension layer | live-event monitoring |
-| the data | 12,360 corrupted posts + 1,500 users, recovered from a puzzle site | Dataset 2 — 9,000 labelled texts, MD5-verified against the official drop | **10,396 self-collected records** — 21 sweeps + team-manual X/YouTube datasets |
+| the data | 12,360 corrupted posts + 1,500 users, recovered from a puzzle site | Dataset 2 — 9,000 labelled texts, MD5-verified against the official drop | **10,384 self-collected records** — 21 sweeps + team-manual X/YouTube datasets |
 | what we built | cleaning pipeline (27 logged repairs) · schema'd SQLite core · 45 SQL answers | TF-IDF + linear sentiment & topic classifiers · LDA/NMF cross-check · 2 report PDFs | sweep collector (9 keyless sources) · Round-2 model applied live · shift/spike detection · 2 report PDFs |
 | headline result | `12,360 − 360 − 1,779 = 10,221` closes exactly; the "midnight peak" trap refuted | sentiment macro-F1 **0.6134** · topic macro-F1 **0.8051**; errors read, not averaged | gold-day positivity shift **p = 0.0043**; 9 spikes (SF cluster z ≤ 3.85); reaction captured through PM Modi's tweet |
 | the doctrine | hold-outs reconcile · NULLs stay NULL · findings must survive refutation | one split, one seed, one test touch · margins reported, not celebrated | created_at ≠ collected_at · every HTTP outcome logged · no login-wall bypass — manual collection documented instead |
@@ -988,14 +988,14 @@ conversation, detecting behavioural shifts as they happen.
   the 13 Sept Asia Cup final, under the still-open trophy standoff.
 - Built a **sweep-model collector** (9 keyless, ToS-respecting sources; one
   sweep = fetch-everything, normalise, dedup, log) and ran it **21 times**
-  across the 10-day results arc (13–22 Sept): `12→2,370→5,544→10,396`.
+  across the 10-day results arc (13–22 Sept): `12→2,370→5,544→10,384`.
 - Went where the APIs would not: **team-manual collection** brought in X
   reactions (snowflake-verified 100%), YouTube comments for **40+ global
   majors** (FIFA WC final, six F1 GPs, three tennis slams, NBA Finals,
   Stanley Cup, WNBA, EPL), and the gold-match source registry — **including
   PM Modi's congratulation tweet**, id-decoded and timestamp-verified.
 - Applied the **shipped Round-2 winner** (`sentiment_best.pkl`, no
-  retraining — the rulebook's mandate) to **10,396 records** across five
+  retraining — the rulebook's mandate) to **10,384 records** across five
   languages (EN/HI/JA/KO/ZH).
 - Detected **9 engagement spikes** (z ≥ 2.5; SF-result cluster peaks z=3.85)
   and the headline behavioural result: a **significant positivity down-shift
@@ -1078,7 +1078,7 @@ distort the time series.
 |---|---:|---|
 | India (spine) | 6,247 | news EN/HI · Mastodon · X manual · gold-match videos |
 | Global (comparison) | 4,149 | EN + 日本語 · 한국어 · 繁體中文 editions; X NFL set; YouTube 40+ majors |
-| **total** | **10,396** | dedup-audited (200 cross-query dupes removed); arc- and scope-tagged |
+| **total** | **10,384** | dedup-audited (200 cross-query dupes removed); arc- and scope-tagged |
 
 The retro arc (13–19 Sept, 1,000+ records) is declared: same code, same
 schema, clearly split from the live window by the `arc` column.
@@ -1087,7 +1087,7 @@ schema, clearly split from the live window by the `arc` column.
 
 ## NLP application - the Round 2 model goes live
 
-`sentiment_best.pkl` scored every text-bearing record (10,396; social slice
+`sentiment_best.pkl` scored every text-bearing record (10,384; social slice
 2,340). Designed readout: the **social slice carries sentiment** (the model's
 home domain); the **news slice is the domain-shift readout** — formal wire
 copy scores heavily Neutral under a social-trained model. That
@@ -1188,7 +1188,7 @@ storyline; nothing is explained post-hoc:
 
 | Rule | How this repo satisfies it |
 |---|---|
-| R3: Self-collected live dataset | `data/round3/round3_live_dataset.csv` — 10,396 rows, arc/scope-tagged, sweep-logged |
+| R3: Self-collected live dataset | `data/round3/round3_live_dataset.csv` — 10,384 rows, arc/scope-tagged, sweep-logged |
 | R3: Scraping/extraction code | `src/round3/collect.py` + `x_syndication.py` (+ manual import protocol) |
 | R3: Real-time analysis notebook | `notebooks/03_live_monitoring_real_time_analysis.ipynb` — executed, 0 errors |
 | R3: Analytical report | `output/round3/Round3_Analytical_Report.pdf` — all mandated sections |
