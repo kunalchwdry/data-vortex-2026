@@ -39,7 +39,7 @@ from round3 import config as C
 from round2.predict import load_bundles, predict_texts
 
 FIG_DIR = C.OUT_R3 / "figures"
-SOCIAL = {"mastodon", "xsynd"}
+SOCIAL = {"mastodon", "xsynd", "y_manual"}
 NEWS = {"gnews", "gnews_hi", "bing", "gdelt"}
 PUBLISH = {"feed_thehindu_cricket", "feed_sportstar_cricket", "feed_ht_sports",
            "feed_espncricinfo"}
@@ -102,6 +102,10 @@ def main() -> int:
         "by_source": df["source"].value_counts().to_dict(),
         "by_arc": df["arc"].value_counts().to_dict(),
         "by_kind": df["kind"].value_counts().to_dict(),
+        "by_scope": df["scope"].value_counts().to_dict(),
+        "yt_events": (df[df["source"] == "y_manual"].groupby("event_name")
+                      .size().sort_values(ascending=False).head(12).to_dict()
+                      if "event_name" in df.columns else {}),
         "n_hindi": int(df["is_hindi"].sum()),
         "date_span": [str(df["date_ist"].min()), str(df["date_ist"].max())],
         "model": "models/round2/sentiment_best.pkl (Round 2 shipped winner)",
@@ -171,9 +175,16 @@ def main() -> int:
     social = df[df["kind"] == "social"]
     if len(social):
         d0 = pd.Timestamp("2026-09-20", tz="Asia/Kolkata")
-        shift_test("SF day: pre-match (00-10:30) vs post-result (13:30-23:59)",
+        shift_test("SHIFT #1 - SF day: pre-match (00-10:30) vs post-result (13:30-23:59)",
                    social, d0, d0 + pd.Timedelta("10.5h"),
                    d0 + pd.Timedelta("13.5h"), d0 + pd.Timedelta("23.9h"))
+        d2 = pd.Timestamp("2026-09-22", tz="Asia/Kolkata")
+        shift_test("SHIFT #2 - GOLD day: pre-match (00-10:30) vs post-result (13:30-20:30)",
+                   social, d2, d2 + pd.Timedelta("10.5h"),
+                   d2 + pd.Timedelta("13.5h"), d2 + pd.Timedelta("20.5h"))
+        shift_test("SHIFT #2b - GOLD day: pre vs post, SOCIAL+X-manual only",
+                   social, d2, d2 + pd.Timedelta("10.5h"),
+                   d2 + pd.Timedelta("13.5h"), d2 + pd.Timedelta("20.5h"))
     summary["shift_tests"] = shifts
 
     # ---------------------------------------------------------------- entities

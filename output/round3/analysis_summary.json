@@ -1,91 +1,146 @@
 {
- "generated_at_ist": "2026-09-20 22:49",
- "n_records": 2370,
+ "generated_at_ist": "2026-09-22 20:52",
+ "n_records": 10396,
  "by_source": {
-  "gnews": 1619,
-  "bing": 451,
-  "mastodon": 221,
-  "feed_ht_sports": 30,
-  "feed_thehindu_cricket": 22,
-  "gdelt": 18,
-  "feed_sportstar_cricket": 9
+  "gnews": 5136,
+  "bing": 2518,
+  "y_manual": 2000,
+  "mastodon": 340,
+  "x_manual": 138,
+  "gdelt": 88,
+  "y_source": 74,
+  "feed_ht_sports": 56,
+  "feed_thehindu_cricket": 27,
+  "feed_sportstar_cricket": 19
  },
  "by_arc": {
-  "live": 1244,
-  "retro": 1126
+  "live": 6974,
+  "retro": 3422
  },
  "by_kind": {
-  "news": 2088,
-  "social": 221,
-  "publisher": 61
+  "news": 7742,
+  "social": 2340,
+  "other": 212,
+  "publisher": 102
  },
- "n_hindi": 559,
+ "by_scope": {
+  "india": 6247,
+  "global": 4149
+ },
+ "yt_events": {
+  "2026 Green Mountain Championship": 69,
+  "2026 Italian Grand Prix": 41,
+  "Jannik Sinner vs Alexander Zverev (2026 Wimbledon Men’s Final)": 32,
+  "India vs Pakistan (2026 DP World Women’s Asia Cup)": 32,
+  "Afghanistan vs India (2026 T20I Series, Match 3)": 30,
+  "2026 BMW PGA Championship Final Round": 26,
+  "2026 BMW PGA Championship": 26,
+  "2026 Canadian Grand Prix": 25,
+  "Portugal vs Uzbekistan (2026 FIFA World Cup)": 20,
+  "Mexico vs South Korea (2026 FIFA World Cup)": 20,
+  "Argentina vs Egypt (2026 FIFA World Cup Round of 16)": 20,
+  "United States vs Australia (2026 FIFA World Cup)": 20
+ },
+ "n_hindi": 1068,
  "date_span": [
-  "2026-09-13",
-  "2026-09-20"
+  "2026-02-23",
+  "NaT"
  ],
  "model": "models/round2/sentiment_best.pkl (Round 2 shipped winner)",
  "spikes": [
   {
+   "hour_ist": "2026-09-20 05:00:00+05:30",
+   "count": 198,
+   "z": 3.25
+  },
+  {
    "hour_ist": "2026-09-20 09:00:00+05:30",
-   "count": 94,
-   "z": 3.74
+   "count": 200,
+   "z": 3.29
   },
   {
    "hour_ist": "2026-09-20 10:00:00+05:30",
-   "count": 145,
-   "z": 6.12
+   "count": 215,
+   "z": 3.59
   },
   {
    "hour_ist": "2026-09-20 11:00:00+05:30",
-   "count": 92,
-   "z": 3.65
+   "count": 175,
+   "z": 2.78
   },
   {
    "hour_ist": "2026-09-20 12:00:00+05:30",
-   "count": 97,
-   "z": 3.88
+   "count": 179,
+   "z": 2.86
   },
   {
    "hour_ist": "2026-09-20 13:00:00+05:30",
-   "count": 113,
-   "z": 4.63
+   "count": 203,
+   "z": 3.35
   },
   {
-   "hour_ist": "2026-09-20 14:00:00+05:30",
-   "count": 77,
-   "z": 2.95
+   "hour_ist": "2026-09-21 10:00:00+05:30",
+   "count": 166,
+   "z": 2.59
+  },
+  {
+   "hour_ist": "2026-09-22 05:00:00+05:30",
+   "count": 198,
+   "z": 3.25
+  },
+  {
+   "hour_ist": "2026-09-22 12:00:00+05:30",
+   "count": 178,
+   "z": 2.84
   }
  ],
- "hourly_mean": 13.94,
- "hourly_sd": 21.4,
+ "hourly_mean": 39.0,
+ "hourly_sd": 48.98,
  "shift_tests": [
   {
-   "contrast": "SF day: pre-match (00-10:30) vs post-result (13:30-23:59)",
-   "n_pre": 25,
-   "n_post": 36,
-   "mean_pre": 0.27,
-   "mean_post": 0.246,
-   "delta": -0.024,
-   "mannwhitney_p": 0.7359
+   "contrast": "SHIFT #1 - SF day: pre-match (00-10:30) vs post-result (13:30-23:59)",
+   "n_pre": 68,
+   "n_post": 48,
+   "mean_pre": 0.28,
+   "mean_post": 0.251,
+   "delta": -0.029,
+   "mannwhitney_p": 0.4817
+  },
+  {
+   "contrast": "SHIFT #2 - GOLD day: pre-match (00-10:30) vs post-result (13:30-20:30)",
+   "n_pre": 188,
+   "n_post": 97,
+   "mean_pre": 0.391,
+   "mean_post": 0.306,
+   "delta": -0.084,
+   "mannwhitney_p": 0.0043
+  },
+  {
+   "contrast": "SHIFT #2b - GOLD day: pre vs post, SOCIAL+X-manual only",
+   "n_pre": 188,
+   "n_post": 97,
+   "mean_pre": 0.391,
+   "mean_post": 0.306,
+   "delta": -0.084,
+   "mannwhitney_p": 0.0043
   }
  ],
  "entity_counts": {
-  "Asian Games (event)": 1658,
-  "Bangladesh (SF opp.)": 266,
-  "Hockey": 240,
-  "Shooting": 236,
-  "Trophy standoff": 225,
-  "Sri Lanka (final opp.)": 170,
-  "Shafali Verma": 167,
-  "Smriti Mandhana": 99,
-  "Harmanpreet Kaur": 81,
-  "Kabaddi": 72,
-  "BCCI": 69,
-  "Sindhu (badminton)": 44,
-  "Sree Charani": 43,
-  "Deepti Sharma": 18,
-  "Richa Ghosh": 4,
+  "Asian Games (event)": 5810,
+  "Sri Lanka (final opp.)": 896,
+  "Shooting": 813,
+  "Hockey": 619,
+  "Bangladesh (SF opp.)": 606,
+  "Shafali Verma": 465,
+  "Trophy standoff": 428,
+  "Kabaddi": 360,
+  "Smriti Mandhana": 347,
+  "Harmanpreet Kaur": 315,
+  "Sindhu (badminton)": 196,
+  "BCCI": 126,
+  "Sree Charani": 58,
+  "Deepti Sharma": 38,
+  "Richa Ghosh": 21,
   "Jemimah Rodrigues": 3,
   "Renuka Singh": 0
  }
