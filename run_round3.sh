@@ -21,12 +21,17 @@ else
 fi
 
 say "2 - real-time analysis (sentiment / activity / topics / shifts)"
-echo "TODO: activates after the assigned topic lands (src/round3/analyze.py)"
+$PY src/round3/analyze.py
 
 say "3 - notebook + Round 3 analytical report"
-echo "TODO: src/round3/make_notebook.py, src/round3/build_report.py"
+$PY src/round3/build_report.py
+$PY src/round3/make_notebook.py
 
-printf '\n\033[1;32mdone (stage 1)\033[0m\n'
+printf '\n\033[1;32mdone\033[0m\n'
 echo "  raw      -> data/round3/live/posts.jsonl"
 echo "  dataset  -> data/round3/round3_live_dataset.csv (deliverable #1)"
 echo "  sweeplog-> data/round3/live/sweep_log.jsonl"
+echo "  scores   -> output/round3/scored.csv"
+echo "  figures  -> output/round3/figures/r3_*.png"
+echo "  report   -> output/round3/Round3_Analytical_Report.pdf (deliverable #4)"
+echo "  notebook -> notebooks/03_live_monitoring_real_time_analysis.ipynb (deliverable #3)"
