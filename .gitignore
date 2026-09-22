@@ -43,3 +43,6 @@ output/round3/quick_score.json
 
 # regenerable score frame (analyze.py se banta hai)
 output/round3/scored.csv
+
+# Round-3 form upload set
+!submission/round3_form_upload/
