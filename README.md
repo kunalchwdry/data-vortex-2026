@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌀 DATA VORTEX 2026
+# DATA VORTEX 2026
 
 ### Rebuilding the Social Engine — the complete two-round build
 
