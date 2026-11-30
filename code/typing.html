@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Typing Blitz — Kunal's Arcade</title>
+<style>
+:root{--bg:#0d1117;--line:#233349;--cyan:#39d2ff;--blue:#58a6ff;--purple:#a371f7;--green:#3fb950;--gold:#ffd166;--red:#f85149;--text:#e6edf3;--muted:#8b949e}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1a2740 0%,transparent 60%),radial-gradient(900px 500px at 90% 0%,#2a1a4a 0%,transparent 55%),var(--bg);color:var(--text);font-family:ui-monospace,JetBrains Mono,monospace;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+header{width:min(920px,94vw);margin:18px auto 10px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:800}
+.badge{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0f1724}
+.wrap{width:min(920px,94vw);display:grid;grid-template-columns:1fr 280px;gap:14px}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#121a28,#0f1724);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:14px}
+.codebox{background:#0a1220;border:1px solid #1e2e46;border-radius:12px;padding:16px;min-height:260px;font-size:15px;line-height:1.8;letter-spacing:.02em;white-space:pre-wrap;word-break:break-all}
+.codebox span{transition:.08s}
+.codebox span.done{color:var(--green)}
+.codebox span.current{color:var(--text);background:#1a2a44;border-radius:3px;box-shadow:0 0 0 1px var(--blue)}
+.codebox span.pending{color:var(--muted)}
+.codebox span.error{color:var(--red);background:#2a1a1a;border-radius:3px}
+.input{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--text);padding:12px;border-radius:10px;font-family:inherit;font-size:14px;margin-top:10px}
+.stat{display:flex;justify-content:space-between;padding:8px 10px;border-radius:10px;background:#0d1524;border:1px solid var(--line);margin-bottom:8px;font-size:13px}
+.stat b{font-size:18px}
+.btn{appearance:none;border:1px solid var(--line);background:#0f1a2b;color:var(--text);padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:12px;width:100%;margin-top:6px}
+.btn.primary{background:linear-gradient(180deg,#1b2a44,#122038);border-color:#2a4a7a}
+.select{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:10px;font-family:inherit;font-size:12px}
+.hint{color:var(--muted);font-size:11px;line-height:1.5;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">KUNAL / ARCADE — <span style="color:var(--cyan)">TYPING BLITZ</span></div>
+<a class="badge" href="./index.html">← All Games</a>
+</header>
+<div class="wrap">
+<div class="card">
+<div class="codebox" id="codebox"></div>
+<input class="input" id="input" placeholder="Start typing the code above..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+</div>
+<div class="card">
+<div class="stat"><span>WPM</span><b id="wpm">0</b></div>
+<div class="stat"><span>Accuracy</span><b id="acc">100%</b></div>
+<div class="stat"><span>Time</span><b id="time">60s</b></div>
+<div class="stat"><span>Best WPM</span><b id="best">0</b></div>
+<select class="select" id="modeSel">
+<option value="code">Code — JS/TS snippets</option>
+<option value="python">Python — Python snippets</option>
+<option value="sql">SQL — Queries</option>
+<option value="mixed">Mixed — All stacks</option>
+<option value="hard">Hard — No backspace + timer</option>
+</select>
+<button class="btn primary" id="startBtn">▶ Start (60s)</button>
+<button class="btn" id="resetBtn">↻ New Snippet</button>
+<div class="hint">
+<strong>How:</strong> Type the snippet exactly. WPM = (chars/5) per minute. Accuracy = correct chars.<br><br>
+<strong>Modes:</strong> Code/ Python/ SQL/ Mixed/ Hard (no backspace). Timer 60s. Best saved.
+</div>
+</div>
+</div>
+<script>
+const SNIPPETS={
+ code:[
+  "const user = await db.select().from(users).where(eq(users.id, id));",
+  "function buildQuest(xp){ return {xp, gold: xp*2, level: Math.floor(xp/100)} }",
+  "app.post('/api/quest', auth, async (req,res)=>{ const q=await createQuest(req.body); res.json(q); });",
+  "type Quest = { id: string; title: string; xp: number; completed: boolean };",
+  "for(let i=0;i<grid.length;i++){ if(grid[i].revealed) continue; reveal(i); }",
+  "const merge = (a,b) => a.filter(v=>v!==0).concat(b).slice(0,4);"
+ ],
+ python:[
+  "def restore_data(df): return df.dropna().reset_index(drop=True).assign(fresh=True)",
+  "for row in corrupted_rows: logger.info(f\"Repair {row.id}: {row.reason}\")",
+  "model = TfidfVectorizer(max_features=5000).fit_transform(corpus)",
+  "with open('data.json') as f: data = json.load(f); print(len(data))",
+  "if score > best: best = score; save_checkpoint(model, best)"
+ ],
+ sql:[
+  "SELECT user_id, COUNT(*) as quests FROM quest_log WHERE completed=true GROUP BY user_id;",
+  "CREATE TABLE provenance (id UUID PRIMARY KEY, source TEXT, freshness TIMESTAMPTZ);",
+  "SELECT * FROM hospitals WHERE ST_DWithin(location, ST_MakePoint(73.8,18.5), 5000);",
+  "UPDATE appointments SET status='confirmed' WHERE id=$1 AND tenant_id=$2 RETURNING *;"
+ ],
+ mixed:[
+  "git commit -m \"feat: add server-authoritative rewards and streaks\"",
+  "docker run -p 3000:3000 --env-file .env kunal/questbound:latest",
+  "npm run build && vercel --prod",
+  "curl -X POST https://api.kunal.dev/quest -H \"Authorization: Bearer $TOKEN\" -d '{\"title\":\"Ship\"}'"
+ ]
+};
+let target='',typed='',startTime=null,timer=null,timeLeft=60,correct=0,total=0,best=0,mode='code',playing=false;
+const codebox=document.getElementById('codebox'),input=document.getElementById('input'),wpmEl=document.getElementById('wpm'),accEl=document.getElementById('acc'),timeEl=document.getElementById('time'),bestEl=document.getElementById('best'),modeSel=document.getElementById('modeSel');
+best=parseInt(localStorage.getItem('typing-best')||'0');bestEl.textContent=best;
+
+function pickSnippet(){
+ const m=modeSel.value;
+ let pool=[];
+ if(m==='code')pool=SNIPPETS.code;
+ else if(m==='python')pool=SNIPPETS.python;
+ else if(m==='sql')pool=SNIPPETS.sql;
+ else if(m==='mixed')pool=[...SNIPPETS.code,...SNIPPETS.python,...SNIPPETS.sql,...SNIPPETS.mixed];
+ else if(m==='hard')pool=[...SNIPPETS.code,...SNIPPETS.python,...SNIPPETS.sql];
+ target=pool[Math.floor(Math.random()*pool.length)];
+ typed='';correct=0;total=0;
+ render();
+ input.value='';input.focus();
+}
+function render(){
+ codebox.innerHTML='';
+ for(let i=0;i<target.length;i++){
+  const span=document.createElement('span');
+  if(i<typed.length){
+   if(typed[i]===target[i]){span.className='done';span.textContent=target[i];correct++;}
+   else{span.className='error';span.textContent=target[i];}
+  }else if(i===typed.length){span.className='current';span.textContent=target[i];}
+  else{span.className='pending';span.textContent=target[i];}
+  codebox.appendChild(span);
+ }
+}
+function calcWPM(){
+ if(!startTime)return 0;
+ let elapsed=(Date.now()-startTime)/1000/60;
+ if(elapsed===0)return 0;
+ return Math.round((typed.length/5)/elapsed);
+}
+function start(){
+ if(playing)return;
+ playing=true;timeLeft=60;startTime=Date.now();
+ timer=setInterval(()=>{
+  timeLeft--;timeEl.textContent=timeLeft+'s';
+  wpmEl.textContent=calcWPM();
+  let acc=total===0?100:Math.round(correct/total*100);accEl.textContent=acc+'%';
+  if(timeLeft<=0){endGame();}
+ },200);
+}
+function endGame(){
+ playing=false;clearInterval(timer);
+ let wpm=calcWPM();
+ let acc=total===0?100:Math.round(correct/total*100);
+ if(wpm>best){best=wpm;bestEl.textContent=best;localStorage.setItem('typing-best',best);}
+ alert(`Time! WPM ${wpm}, Accuracy ${acc}%, Best ${best}`);
+}
+
+input.addEventListener('input',e=>{
+ if(!playing)start();
+ if(modeSel.value==='hard'&&e.inputType==='deleteContentBackward'){input.value=typed;return;}
+ typed=input.value;
+ total=typed.length;
+ // recalc correct
+ correct=0;
+ for(let i=0;i<Math.min(typed.length,target.length);i++)if(typed[i]===target[i])correct++;
+ render();
+ wpmEl.textContent=calcWPM();
+ let acc=total===0?100:Math.round(correct/total*100);accEl.textContent=acc+'%';
+ if(typed.length>=target.length&&typed===target){
+  // new snippet
+  scoreBonus();
+  pickSnippet();
+  input.value='';
+  typed='';
+ }
+});
+function scoreBonus(){
+ // small bonus time in hard? not needed
+}
+document.getElementById('startBtn').onclick=()=>{pickSnippet();input.focus();timeLeft=60;timeEl.textContent='60s';playing=false;clearInterval(timer);startTime=null;wpmEl.textContent='0';accEl.textContent='100%';};
+document.getElementById('resetBtn').onclick=()=>{pickSnippet();};
+modeSel.onchange=()=>{pickSnippet();};
+pickSnippet();
+</script>
+</body>
+</html>
